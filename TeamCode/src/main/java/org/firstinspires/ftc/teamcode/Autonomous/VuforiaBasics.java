@@ -17,7 +17,7 @@ public class VuforiaBasics extends LinearOpMode {
     VuforiaLocalizer.Parameters parameters;
     VuforiaTrackables visionTargets;
     VuforiaTrackables target;
-    VuforiaTrackableDefaultListener listener;
+    VuforiaTrackableDefaultListener listener; 
     OpenGLMatrix lastKnownLocation;
     OpenGLMatrix phonelocation;
 
