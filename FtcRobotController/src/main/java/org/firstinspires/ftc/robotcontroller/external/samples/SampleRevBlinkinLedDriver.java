@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
  * Displays the first pattern upon init.
  */
 @TeleOp(name="BlinkinExample")
-@Disabled
+
 public class SampleRevBlinkinLedDriver extends OpMode {
 
     /*
@@ -80,9 +80,9 @@ public class SampleRevBlinkinLedDriver extends OpMode {
     @Override
     public void init()
     {
-        displayKind = DisplayKind.AUTO;
+        displayKind = DisplayKind.MANUAL;
 
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
         pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
         blinkinLedDriver.setPattern(pattern);
 
@@ -125,16 +125,16 @@ public class SampleRevBlinkinLedDriver extends OpMode {
         }
 
         if (gamepad1.a) {
-            setDisplayKind(DisplayKind.MANUAL);
+            setDisplayKind(DisplayKind.AUTO);
             gamepadRateLimit.reset();
         } else if (gamepad1.b) {
             setDisplayKind(DisplayKind.AUTO);
             gamepadRateLimit.reset();
-        } else if ((displayKind == DisplayKind.MANUAL) && (gamepad1.left_bumper)) {
+        } else if ((displayKind == DisplayKind.AUTO) && (gamepad1.left_bumper)) {
             pattern = pattern.previous();
             displayPattern();
             gamepadRateLimit.reset();
-        } else if ((displayKind == DisplayKind.MANUAL) && (gamepad1.right_bumper)) {
+        } else if ((displayKind == DisplayKind.AUTO) && (gamepad1.right_bumper)) {
             pattern = pattern.next();
             displayPattern();
             gamepadRateLimit.reset();
