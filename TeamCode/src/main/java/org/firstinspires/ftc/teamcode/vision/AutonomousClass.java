@@ -1,29 +1,24 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.vision;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
-
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.TeleOp.OmniDriveTrainV2;
+
+public class AutonomousClass {
 
 
-public class OmniDriveTrainV2 {
     protected DcMotor backRightWheel;
     protected DcMotor backLeftWheel;
     protected DcMotor frontRightWheel;
     protected DcMotor frontLeftWheel;
-    protected DcMotor intakeL;
-    protected DcMotor intakeR;
-    protected DcMotor launcherL;
-    protected DcMotor launcherR;
 
 
 
@@ -54,7 +49,7 @@ public class OmniDriveTrainV2 {
         }
     }
 
-    public OmniDriveTrainV2(HardwareMap hardwareMap, Telemetry telemetry, DirectionEnum direction) {
+    public AutonomousClass(HardwareMap hardwareMap, Telemetry telemetry, OmniDriveTrainV2.DirectionEnum direction) {
         this.telemetry = telemetry;
         this.initializeGyro(hardwareMap, telemetry);
         this.initializeMotors(hardwareMap, telemetry);
@@ -71,17 +66,10 @@ public class OmniDriveTrainV2 {
         this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
         this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
         this.frontRightWheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
-        this.intakeL = hardwareMap.dcMotor.get("Intake_Left");
-        this.intakeR = hardwareMap.dcMotor.get("Intake_Right");
-        this.launcherL = hardwareMap.dcMotor.get("Launcher_Left");
-        this.launcherR = hardwareMap.dcMotor.get("Launcher_Right");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
         backRightWheel.setDirection(DcMotor.Direction.FORWARD);
-        launcherL.setDirection(DcMotor.Direction.REVERSE);
-        launcherR.setDirection(DcMotor.Direction.FORWARD);
-        intakeL.setDirection(DcMotor.Direction.FORWARD);
         frontLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -151,33 +139,6 @@ public class OmniDriveTrainV2 {
 
     }
 
-
-    public void intake(){
-        intakeL.setPower(0.8);
-  //      intakeR.setPower(0.8);
-    }
-
-    public void intakeStop(){
-        intakeL.setPower(0);
-  //      intakeR.setPower(0);
-    }
-
-    public void outtake(){
-        intakeL.setPower(-0.8);
-  //      intakeR.setPower(-0.8);
-    }
-
-    public void launch(){
-        launcherL.setPower(0.8);
-        launcherR.setPower(0.8);
-    }
-
-    public void launchStop(){
-        launcherL.setPower(0);
-        launcherR.setPower(0);
-    }
-
-
     public void drive(double moveValue, double crabValue, double turnValue) {
 
         double Protate = turnValue/4;
@@ -235,6 +196,13 @@ public class OmniDriveTrainV2 {
         frontRightWheel.setPower(Px + Protate);
 
         telemetry.update();
+    }
+
+    public void DBP (double moveToValue, double crabValue, double turnValue )
+    {
+        this.drive(moveToValue, crabValue, turnValue);
+
+
     }
 
 }

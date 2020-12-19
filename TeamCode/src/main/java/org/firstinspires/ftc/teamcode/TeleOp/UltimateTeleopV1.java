@@ -35,6 +35,7 @@ public class UltimateTeleopV1 extends LinearOpMode {
 //
 //        telemetry.addData("Mode", "calibrating...");
         telemetry.update();
+        this.driveTrain2.getHeading();
 
         waitForStart();
 
@@ -58,8 +59,28 @@ public class UltimateTeleopV1 extends LinearOpMode {
             this.driveTrain2.drive(crabValue, moveValue, turnValue);
             idle();
 
-
-
+//            if (gamepad1.a){
+//                this.driveTrain2.resetAngle();
+//            }
+//
+//            if (gamepad2.left_trigger > 0.3){
+//                this.driveTrain2.intake();
+//            }
+//
+//            if(gamepad2.left_bumper){
+//                this.driveTrain2.outtake();
+//            }
+//
+//            if(gamepad2.left_trigger < 0.3 && !gamepad2.left_bumper){
+//                this.driveTrain2.intakeStop();
+//            }
+//
+//            if(gamepad2.right_trigger > 0.3){
+//                this.driveTrain2.launch();
+//            }
+//            else{
+//                this.driveTrain2.launchStop();
+//            }
         }
         telemetry.update();
 
