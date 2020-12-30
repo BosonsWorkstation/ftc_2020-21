@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.HardwareMap.HardwareMap_Example;
 
 // CHAWKS: Name it something useful!
 @TeleOp(name = "I like to move", group = "A")
-//@Disabled
+@Disabled
 public class JerseyGirlHolonomic extends HardwareMap_Example {
 
 

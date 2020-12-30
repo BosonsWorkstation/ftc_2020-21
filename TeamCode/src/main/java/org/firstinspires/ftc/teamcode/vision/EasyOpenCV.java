@@ -78,13 +78,15 @@ public class EasyOpenCV extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181,98);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70,30);
 
-        static final int REGION_WIDTH = 35;
-        static final int REGION_HEIGHT = 25;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        //WE HAVE DOUBLED THIS FOR TESTING, THE ORIGINAL VALUES ARE 35 AND 25!!!!!!!!! -Shawn
+        static final int REGION_WIDTH = 200;
+        static final int REGION_HEIGHT = 170;
+
+        final int FOUR_RING_THRESHOLD = 140;
+        final int ZERO_RING_THRESHOLD = 115;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -139,10 +141,10 @@ public class EasyOpenCV extends LinearOpMode
             position = RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
                 position = RingPosition.FOUR;
-            }else if (avg1 > ONE_RING_THRESHOLD){
-                position = RingPosition.ONE;
-            }else{
+            }else if (avg1 < ZERO_RING_THRESHOLD){
                 position = RingPosition.NONE;
+            }else{
+                position = RingPosition.ONE;
             }
 
             Imgproc.rectangle(

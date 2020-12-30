@@ -41,7 +41,7 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
         while (opModeIsActive()) {
- 
+
 
             double crabValue = 0;
             double moveValue = 0;
@@ -59,28 +59,28 @@ public class UltimateTeleopV1 extends LinearOpMode {
             this.driveTrain2.drive(crabValue, moveValue, turnValue);
             idle();
 
-//            if (gamepad1.a){
-//                this.driveTrain2.resetAngle();
-//            }
-//
-//            if (gamepad2.left_trigger > 0.3){
-//                this.driveTrain2.intake();
-//            }
-//
-//            if(gamepad2.left_bumper){
-//                this.driveTrain2.outtake();
-//            }
-//
-//            if(gamepad2.left_trigger < 0.3 && !gamepad2.left_bumper){
-//                this.driveTrain2.intakeStop();
-//            }
-//
-//            if(gamepad2.right_trigger > 0.3){
-//                this.driveTrain2.launch();
-//            }
-//            else{
-//                this.driveTrain2.launchStop();
-//            }
+            if (gamepad1.a){
+                this.driveTrain2.resetAngle();
+            }
+
+            if (gamepad2.left_trigger > 0.3){
+                this.driveTrain2.intake();
+            }
+
+            if(gamepad2.left_bumper){
+                this.driveTrain2.outtake();
+            }
+
+            if(gamepad2.left_trigger < 0.3 && !gamepad2.left_bumper){
+                this.driveTrain2.intakeStop();
+            }
+
+            if(gamepad2.right_trigger > 0.3){
+                this.driveTrain2.launch();
+            }
+            else{
+                this.driveTrain2.launchStop();
+            }
         }
         telemetry.update();
 
