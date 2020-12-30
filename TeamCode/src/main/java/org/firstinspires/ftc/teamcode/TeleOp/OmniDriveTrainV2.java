@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import static java.lang.Thread.sleep;
 
 
 public class OmniDriveTrainV2 {
@@ -24,6 +25,7 @@ public class OmniDriveTrainV2 {
     protected DcMotor intakeR;
     protected DcMotor launcherL;
     protected DcMotor launcherR;
+    protected Servo propeller;
 
 
 
@@ -75,6 +77,7 @@ public class OmniDriveTrainV2 {
         this.intakeR = hardwareMap.dcMotor.get("Intake_Right");
         this.launcherL = hardwareMap.dcMotor.get("Launcher_Left");
         this.launcherR = hardwareMap.dcMotor.get("Launcher_Right");
+        this.propeller = hardwareMap.servo.get("Propeller");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
@@ -175,6 +178,12 @@ public class OmniDriveTrainV2 {
     public void launchStop(){
         launcherL.setPower(0);
         launcherR.setPower(0);
+    }
+
+    public void propel() throws InterruptedException {
+        propeller.setPosition(0.7);
+        Thread.sleep(1000);
+        propeller.setPosition(0.5);
     }
 
 

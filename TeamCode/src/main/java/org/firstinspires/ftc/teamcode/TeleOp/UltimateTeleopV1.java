@@ -76,6 +76,7 @@ public class UltimateTeleopV1 extends LinearOpMode {
             }
 
             if(gamepad2.right_trigger > 0.3){
+                this.driveTrain2.propel();
                 this.driveTrain2.launch();
             }
             else{
