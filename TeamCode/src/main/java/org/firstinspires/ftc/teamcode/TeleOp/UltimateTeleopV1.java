@@ -63,24 +63,48 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 this.driveTrain2.resetAngle();
             }
 
-            if (gamepad2.left_trigger > 0.3){
-                this.driveTrain2.intake();
-            }
+//            if (gamepad2.left_trigger > 0.3){
+//                this.driveTrain2.intake();
+//            }
 
-            if(gamepad2.left_bumper){
-                this.driveTrain2.outtake();
-            }
+//            if(gamepad2.left_bumper){
+//                this.driveTrain2.outtake();
+//            }
 
             if(gamepad2.left_trigger < 0.3 && !gamepad2.left_bumper){
                 this.driveTrain2.intakeStop();
             }
 
+            //trying to do both propellor and launcher simultaneously, will likely need redesign
             if(gamepad2.right_trigger > 0.3){
-                this.driveTrain2.propel();
-                this.driveTrain2.launch();
+              this.driveTrain2.launch();
+            }
+//            if(gamepad2.left_trigger > 0.3){
+//                this.driveTrain2.launchStop();
+//            }
+
+            if(gamepad2.right_trigger > 0.3){
+                this.driveTrain2.powerLaunch();
+            }
+//            if(gamepad2.left_bumper){
+//                this.driveTrain2.launchStop();
+//            }
+
+            if(gamepad2.y){
+              this.driveTrain2.propel();
+            }
+            if(!gamepad2.y){
+                //this.driveTrain2.propel
+            }
+
+            if(gamepad1.dpad_up){
+                this.driveTrain2.towerHandUp();
+            }
+            else if(gamepad1.dpad_down){
+                this.driveTrain2.towerHandDown();
             }
             else{
-                this.driveTrain2.launchStop();
+                this.driveTrain2.towerHandStop();
             }
         }
         telemetry.update();

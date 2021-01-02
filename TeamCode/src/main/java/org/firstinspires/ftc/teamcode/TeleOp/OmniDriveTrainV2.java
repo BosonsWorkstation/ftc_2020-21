@@ -21,8 +21,8 @@ public class OmniDriveTrainV2 {
     protected DcMotor backLeftWheel;
     protected DcMotor frontRightWheel;
     protected DcMotor frontLeftWheel;
-    protected DcMotor intakeL;
-    protected DcMotor intakeR;
+    protected DcMotor towerHand;
+    protected DcMotor intake;
     protected DcMotor launcherL;
     protected DcMotor launcherR;
     protected Servo propeller;
@@ -44,6 +44,10 @@ public class OmniDriveTrainV2 {
     private Telemetry.Item rightBackTelemetry;
     private Telemetry.Item usePowerTelemetry;
 
+    int launchOn = 1;
+    int launchTF = 1;
+    int powerLaunchOn = 1;
+    int powerLaunchTF = 1;
 
     public enum DirectionEnum{
         NORTH(90), SOUTH(-90), EAST(180), WEST(0);
@@ -73,8 +77,8 @@ public class OmniDriveTrainV2 {
         this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
         this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
         this.frontRightWheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
-        this.intakeL = hardwareMap.dcMotor.get("Intake_Left");
-        this.intakeR = hardwareMap.dcMotor.get("Intake_Right");
+        this.towerHand = hardwareMap.dcMotor.get("Tower_Hand");
+        this.intake = hardwareMap.dcMotor.get("Intake");
         this.launcherL = hardwareMap.dcMotor.get("Launcher_Left");
         this.launcherR = hardwareMap.dcMotor.get("Launcher_Right");
         this.propeller = hardwareMap.servo.get("Propeller");
@@ -84,7 +88,7 @@ public class OmniDriveTrainV2 {
         backRightWheel.setDirection(DcMotor.Direction.FORWARD);
         launcherL.setDirection(DcMotor.Direction.REVERSE);
         launcherR.setDirection(DcMotor.Direction.FORWARD);
-        intakeL.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.REVERSE);
         frontLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -93,6 +97,7 @@ public class OmniDriveTrainV2 {
         frontRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        towerHand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -156,23 +161,26 @@ public class OmniDriveTrainV2 {
 
 
     public void intake(){
-        intakeL.setPower(0.8);
-  //      intakeR.setPower(0.8);
+        intake.setPower(0.8);
     }
 
     public void intakeStop(){
-        intakeL.setPower(0);
-  //      intakeR.setPower(0);
+        intake.setPower(0);
     }
 
     public void outtake(){
-        intakeL.setPower(-0.8);
-  //      intakeR.setPower(-0.8);
+        intake.setPower(-0.8);
     }
 
     public void launch(){
-        launcherL.setPower(0.8);
-        launcherR.setPower(0.8);
+        launchTF = launchOn + 1;
+        if (launchTF % 2 == 0) {
+            launcherL.setPower(0.8);
+            launcherR.setPower(0.8);
+        }
+        else{
+            launchStop();
+        }
     }
 
     public void launchStop(){
@@ -180,10 +188,34 @@ public class OmniDriveTrainV2 {
         launcherR.setPower(0);
     }
 
+    public void powerLaunch(){
+        powerLaunchTF = powerLaunchOn + 1;
+        if (launchTF % 2 == 0) {
+            launcherL.setPower(0.5);
+            launcherR.setPower(0.5);
+        }
+        else{
+            launchStop();
+        }
+    }
+
     public void propel() throws InterruptedException {
-        propeller.setPosition(0.7);
-        Thread.sleep(1000);
-        propeller.setPosition(0.5);
+        propeller.setPosition(0.1);
+        Thread.sleep(400);
+//        propeller.setPosition(0.5);
+//        Thread.sleep(100);
+    }
+
+    public void towerHandUp(){
+        towerHand.setPower(0.6);
+    }
+
+    public void towerHandDown(){
+        towerHand.setPower(-0.6);
+    }
+
+    public void towerHandStop(){
+        towerHand.setPower(0);
     }
 
 
