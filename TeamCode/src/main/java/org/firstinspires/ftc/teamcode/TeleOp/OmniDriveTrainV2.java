@@ -44,11 +44,6 @@ public class OmniDriveTrainV2 {
     private Telemetry.Item rightBackTelemetry;
     private Telemetry.Item usePowerTelemetry;
 
-    int launchOn = 1;
-    int launchTF = 1;
-    int powerLaunchOn = 1;
-    int powerLaunchTF = 1;
-
     public enum DirectionEnum{
         NORTH(90), SOUTH(-90), EAST(180), WEST(0);
         private double correction;
@@ -81,6 +76,8 @@ public class OmniDriveTrainV2 {
         this.intake = hardwareMap.dcMotor.get("Intake");
         this.launcherL = hardwareMap.dcMotor.get("Launcher_Left");
         this.launcherR = hardwareMap.dcMotor.get("Launcher_Right");
+        this.launcherL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.launcherR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.propeller = hardwareMap.servo.get("Propeller");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
@@ -173,14 +170,8 @@ public class OmniDriveTrainV2 {
     }
 
     public void launch(){
-        launchTF = launchOn + 1;
-        if (launchTF % 2 == 0) {
-            launcherL.setPower(0.8);
-            launcherR.setPower(0.8);
-        }
-        else{
-            launchStop();
-        }
+       launcherL.setPower(0.8);
+       launcherR.setPower(0.8);
     }
 
     public void launchStop(){
@@ -189,21 +180,15 @@ public class OmniDriveTrainV2 {
     }
 
     public void powerLaunch(){
-        powerLaunchTF = powerLaunchOn + 1;
-        if (launchTF % 2 == 0) {
-            launcherL.setPower(0.5);
-            launcherR.setPower(0.5);
-        }
-        else{
-            launchStop();
-        }
+        launcherL.setPower(0.45);
+        launcherR.setPower(0.45);
     }
 
     public void propel() throws InterruptedException {
         propeller.setPosition(0.1);
-        Thread.sleep(400);
-//        propeller.setPosition(0.5);
-//        Thread.sleep(100);
+        Thread.sleep(765);
+        propeller.setPosition(0.5);
+//        Thread.sleep(25);
     }
 
     public void towerHandUp(){
@@ -261,6 +246,7 @@ public class OmniDriveTrainV2 {
         theta = Math.atan2(stick_y, stick_x) - gyroAngle - (Math.PI / 2);
         Px = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta + Math.PI / 4));
         Py = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta - Math.PI / 4));
+
 
         telemetry.addData("Stick_X", stick_x);
         telemetry.addData("Stick_Y", stick_y);

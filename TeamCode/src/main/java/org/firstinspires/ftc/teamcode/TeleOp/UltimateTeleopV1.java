@@ -79,16 +79,15 @@ public class UltimateTeleopV1 extends LinearOpMode {
             if(gamepad2.right_trigger > 0.3){
               this.driveTrain2.launch();
             }
-//            if(gamepad2.left_trigger > 0.3){
-//                this.driveTrain2.launchStop();
-//            }
 
-            if(gamepad2.right_trigger > 0.3){
+            if(gamepad2.left_trigger > 0.3){
                 this.driveTrain2.powerLaunch();
             }
-//            if(gamepad2.left_bumper){
-//                this.driveTrain2.launchStop();
-//            }
+
+            if(gamepad2.right_trigger < 0.3 && gamepad2.left_trigger < 0.3){
+                this.driveTrain2.launchStop();
+            }
+
 
             if(gamepad2.y){
               this.driveTrain2.propel();
