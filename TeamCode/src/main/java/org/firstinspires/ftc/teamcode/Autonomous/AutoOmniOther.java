@@ -16,6 +16,9 @@ public class AutoOmniOther{
     protected DcMotor backLeftWheel;
     protected DcMotor frontRightWheel;
     protected DcMotor frontLeftWheel;
+    protected DcMotor launcherL;
+    protected DcMotor launcherR;
+    protected Servo propeller;
 //    protected Servo leveler;
 
     private BNO055IMU imu;
@@ -47,11 +50,11 @@ public class AutoOmniOther{
         this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
         this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
         this.frontRightWheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
-        this.backLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.backRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.frontLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.frontRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.launcherL = hardwareMap.dcMotor.get("Launcher_Left");
+        this.launcherR = hardwareMap.dcMotor.get("Launcher_Right");
+        this.launcherL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.launcherR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.propeller = hardwareMap.servo.get("Propeller");
     }
 
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry){
@@ -208,21 +211,21 @@ public class AutoOmniOther{
         }
     }
 
-    public void crab(double power, int directionCrab){
-
-        this.setCrabMotorDirections(directionCrab);
-//        telemetry.addData("Motor Power", frontRightWheel.getPower());
-//        telemetry.addData("Motor Power", frontLeftWheel.getPower());
-//        telemetry.addData("Motor Power", backRightWheel.getPower());
-//        telemetry.addData("Motor Power", backLeftWheel.getPower());
-        if(GO_SLOW){
-            power = 0.2;
-        }
-        this.turnMotors(power);
-
-
-
-    }
+//    public void crab(double power, int directionCrab){
+//
+//        this.setCrabMotorDirections(directionCrab);
+////        telemetry.addData("Motor Power", frontRightWheel.getPower());
+////        telemetry.addData("Motor Power", frontLeftWheel.getPower());
+////        telemetry.addData("Motor Power", backRightWheel.getPower());
+////        telemetry.addData("Motor Power", backLeftWheel.getPower());
+//        if(GO_SLOW){
+//            power = 0.2;
+//        }
+//        this.turnMotors(power);
+//
+//
+//
+//    }
 
 
 

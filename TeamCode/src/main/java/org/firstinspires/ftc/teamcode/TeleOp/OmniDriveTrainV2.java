@@ -37,6 +37,7 @@ public class OmniDriveTrainV2 {
     float rotate_angle = 0;
     double reset_angle = 0;
     private double correction_factor = 0;
+    Boolean isLauncherBusy = false;
 
     private Telemetry.Item leftFrontTelemetry;
     private Telemetry.Item rightFrontTelemetry;
@@ -177,6 +178,7 @@ public class OmniDriveTrainV2 {
     public void launchStop(){
         launcherL.setPower(0);
         launcherR.setPower(0);
+
     }
 
     public void powerLaunch(){

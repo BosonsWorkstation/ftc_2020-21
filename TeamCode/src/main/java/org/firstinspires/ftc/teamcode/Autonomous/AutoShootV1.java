@@ -27,7 +27,25 @@ public class AutoShootV1 extends LinearOpMode {
 
             if(!parked) {
 
-            this.autoOmni.newMoveDistance(1000, 0.5);
+                this.autoOmni.launch();
+            this.autoOmni.move(500, 0.4);
+            Thread.sleep(300);
+            this.autoOmni.crab(500, 0.4);
+            Thread.sleep(300);
+            this.autoOmni.move(2400, 0.4);
+            Thread.sleep(300);
+            this.autoOmni.crab(-500, 0.4);
+            Thread.sleep(300);
+
+            this.autoOmni.propel();
+            Thread.sleep(300);
+            this.autoOmni.propel();
+            Thread.sleep(300);
+            this.autoOmni.propel();
+            Thread.sleep(300);
+            this.autoOmni.propel();
+
+            this.autoOmni.move(400, 0.4);
 
             }
 

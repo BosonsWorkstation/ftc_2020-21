@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Autonomous.AutoOmniDriveTrainV1;
+import org.firstinspires.ftc.teamcode.vision.EasyOpenCV;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -16,15 +18,19 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Autonomous(name = "EasyOpenCV", group = "Linear Opmode")
-public class EasyOpenCV extends LinearOpMode
+@Autonomous(name = "Ring Detect!", group = "Linear Opmode")
+public class RingDetect extends LinearOpMode
 {
+
+    private AutoOmniDriveTrainV1 autoOmni;
+
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
+        this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
+        this.autoOmni.initMotors();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -49,13 +55,26 @@ public class EasyOpenCV extends LinearOpMode
 
         while (opModeIsActive())
         {
+            wait(2000);
+            if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
+                this.autoOmni.move(-300, 0.4);
+            }
+
+            if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE){
+                this.autoOmni.move(300, 0.4);
+            }
+            if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE){
+             this.autoOmni.stopNow();
+            }
+
+
 
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("Position", pipeline.position);
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
+//            sleep(50);
         }
     }
 
@@ -140,7 +159,7 @@ public class EasyOpenCV extends LinearOpMode
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = RingPosition.FOUR; // Record our analysis
+            position = RingPosition.NONE; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
                 position = RingPosition.FOUR;
             }else if (avg1 < ZERO_RING_THRESHOLD){
