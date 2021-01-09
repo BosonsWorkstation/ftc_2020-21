@@ -242,6 +242,7 @@ public class OmniDriveTrainV2 {
 //        }
 
 
+
         //MOVEMENT
         theta = Math.atan2(stick_y, stick_x) - gyroAngle - (Math.PI / 2);
         Px = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta + Math.PI / 4));
