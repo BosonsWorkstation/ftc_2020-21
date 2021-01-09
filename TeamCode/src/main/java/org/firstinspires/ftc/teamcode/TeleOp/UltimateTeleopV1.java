@@ -25,7 +25,7 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
         this.driveTrain2.initializeGyro(hardwareMap, telemetry);
         this.driveTrain2.initializeMotors(hardwareMap, telemetry);
-//        this.blockArm = new SkyStoneStacker(this.hardwareMap, this.telemetry);
+
 
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
@@ -96,10 +96,10 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 //this.driveTrain2.propel
             }
 
-            if(gamepad1.dpad_up){
+            if(gamepad2.dpad_up){
                 this.driveTrain2.towerHandUp();
             }
-            else if(gamepad1.dpad_down){
+            else if(gamepad2.dpad_down){
                 this.driveTrain2.towerHandDown();
             }
             else{

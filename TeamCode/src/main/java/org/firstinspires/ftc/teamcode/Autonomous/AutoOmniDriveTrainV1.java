@@ -57,34 +57,7 @@ public class AutoOmniDriveTrainV1 extends AutoOmniOther{
         int currentPosition = 0;
         this.setMoveMotorDirection(direction);
         boolean done = false;
-//        if(direction > 0 && frontRightWheel.getCurrentPosition() < targetValue){
-//            frontRightWheel.setPower(.4);
-//            frontLeftWheel.setPower(.4);
-//            backRightWheel.setPower(.4);
-//            backLeftWheel.setPower(.4);
-//            Thread.sleep(5);
-//        }
-//        if(direction < 0 && frontRightWheel.getCurrentPosition() > targetValue){
-//            frontRightWheel.setPower(-0.4);
-//            frontLeftWheel.setPower(-0.4);
-//            backRightWheel.setPower(-0.4);
-//            backLeftWheel.setPower(-0.4);
-//            Thread.sleep(5);
-//        }
-//        while(!done){
-//
-//            frontRightWheel.setPower(.4);
-//            frontLeftWheel.setPower(.4);
-//            backRightWheel.setPower(.4);
-//            backLeftWheel.setPower(.4);
-//            Thread.sleep(5);
-//            if((direction > 0 && frontRightWheel.getCurrentPosition() < targetValue) ||
-//                    (direction < 0 && frontRightWheel.getCurrentPosition() > targetValue)){
-//                done = true;
-//            }
-//        }
-//        currentPositionTel.setValue("%d",currentPosition);
-//        telemetry.update();
+
 
         this.stopNow();
     }
@@ -122,34 +95,36 @@ public class AutoOmniDriveTrainV1 extends AutoOmniOther{
         stop();
     }
 
+    public void crabRight(int distance, double power){
+        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
+        int frontRightPosition = frontRightWheel.getCurrentPosition();
+        int backLeftPosition = backLeftWheel.getCurrentPosition();
+        int backRightPosition = backRightWheel.getCurrentPosition();
 
+        frontLeftWheel.setTargetPosition(frontLeftPosition + distance);
+        frontRightWheel.setTargetPosition(frontRightPosition + distance);
+        backLeftWheel.setTargetPosition(backLeftPosition + distance);
+        backRightWheel.setTargetPosition(backRightPosition + distance);
 
-// public void crabbingDistance (int distance) throws InterruptedException {
-//
-//        int direction = distance > 0 ? -1 : 1;
-//        int targetValue = getTargetValue(distance);
-//        int currentPosition;
-//
-//        this.setCrabMotorDirections(direction);
-//
-//        while(Math.abs( currentPosition = frontRightWheel.getCurrentPosition()) <  targetValue){
-//            frontRightWheel.setPower(.4);
-//            frontLeftWheel.setPower(.4);
-//            backRightWheel.setPower(.4);
-//            backLeftWheel.setPower(.4);
-//            Thread.sleep(5);
-//
-////
-//        }
+        frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        frontLeftWheel.setPower(power);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(power);
+        backRightWheel.setPower(power);
 
-//
-//        this.stopNow();
-//    }
-    public void levelerControl (int power){
-        if (power > 0){
-
+        while(frontLeftWheel.isBusy() || frontRightWheel.isBusy() || backLeftWheel.isBusy() || backRightWheel.isBusy()){
+            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
+            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
+            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
+            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
+            telemetry.update();
         }
+
+        stop();
     }
 
 }
