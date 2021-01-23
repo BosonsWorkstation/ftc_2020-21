@@ -245,7 +245,7 @@ public class OmniDriveTrainV2 {
 
 //        telemetry.addData("servo bruh", intakeServo.getPosition());
 //        telemetry.addData("Stick_X", stick_x);
-//        telemetry.addData("Stick_Y", stick_y);
+//        telemetry.addData("Stick_Y", stick_y); 
 //        telemetry.addData("Magnitude",  Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));
 //        telemetry.addData("Front Left", Py - Protate);
 //        telemetry.addData("Back Left", Px - Protate);
