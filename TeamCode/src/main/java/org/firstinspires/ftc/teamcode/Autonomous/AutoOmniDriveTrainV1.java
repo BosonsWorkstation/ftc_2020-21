@@ -133,6 +133,14 @@ public class AutoOmniDriveTrainV1 extends AutoOmniOther{
         stopNow();
     }
 
+    public void knockIntake(){
+        intakeServo.setPosition(0.1);
+    }
+
+    public void unknockIntake(){
+        intakeServo.setPosition(1);
+    }
+
 //    public void crabLeft(int distance, double power){
 //        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
 //        int frontRightPosition = frontRightWheel.getCurrentPosition();
@@ -198,8 +206,8 @@ public class AutoOmniDriveTrainV1 extends AutoOmniOther{
     }
 
     public void launch() {
-        this.launcherL.setPower(0.8);
-        this.launcherR.setPower(0.8);
+        this.launcherL.setPower(0.53);
+        this.launcherR.setPower(0.53);
     }
     public void launchStop(){
         this.launcherL.setPower(0);
@@ -210,8 +218,9 @@ public class AutoOmniDriveTrainV1 extends AutoOmniOther{
     public void propel() throws InterruptedException{
 
         propeller.setPosition(0.1);
-        Thread.sleep(765);
+        Thread.sleep(770);
         propeller.setPosition(0.5);
+
 
     }
 

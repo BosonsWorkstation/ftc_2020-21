@@ -19,6 +19,8 @@ public class AutoOmniOther{
     protected DcMotor launcherL;
     protected DcMotor launcherR;
     protected Servo propeller;
+    protected Servo intakeServo;
+    protected DcMotor towerHand;
 //    protected Servo leveler;
 
     private BNO055IMU imu;
@@ -55,6 +57,8 @@ public class AutoOmniOther{
         this.launcherL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.launcherR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.propeller = hardwareMap.servo.get("Propeller");
+        this.intakeServo = hardwareMap.servo.get("Intake_Servo");
+        this.towerHand = hardwareMap.dcMotor.get("Tower_Hand");
     }
 
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry){
@@ -72,6 +76,17 @@ public class AutoOmniOther{
         imu.initialize(parameters);
     }
 
+    public void towerHandUp(){
+        towerHand.setPower(-0.8);
+    }
+
+    public void towerHandDown(){
+        towerHand.setPower(0.8);
+    }
+
+    public void towerHandStop(){
+        towerHand.setPower(0);
+    }
 
     public void stop(){
 

@@ -26,6 +26,7 @@ public class OmniDriveTrainV2 {
     protected DcMotor launcherL;
     protected DcMotor launcherR;
     protected Servo propeller;
+    protected Servo intakeServo;
 
 
 
@@ -37,7 +38,6 @@ public class OmniDriveTrainV2 {
     float rotate_angle = 0;
     double reset_angle = 0;
     private double correction_factor = 0;
-    Boolean isLauncherBusy = false;
 
     private Telemetry.Item leftFrontTelemetry;
     private Telemetry.Item rightFrontTelemetry;
@@ -80,6 +80,7 @@ public class OmniDriveTrainV2 {
         this.launcherL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.launcherR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.propeller = hardwareMap.servo.get("Propeller");
+        this.intakeServo = hardwareMap.servo.get("Intake_Servo");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
@@ -158,21 +159,21 @@ public class OmniDriveTrainV2 {
     }
 
 
-    public void intake(){
-        intake.setPower(0.8);
+    public void outtake(){
+        intake.setPower(-0.8);
     }
 
     public void intakeStop(){
         intake.setPower(0);
     }
 
-    public void outtake(){
-        intake.setPower(-0.8);
+    public void intake(){
+        intake.setPower(0.7);
     }
 
     public void launch(){
-       launcherL.setPower(0.8);
-       launcherR.setPower(0.8);
+       launcherL.setPower(0.43);
+       launcherR.setPower(0.43);
     }
 
     public void launchStop(){
@@ -182,15 +183,23 @@ public class OmniDriveTrainV2 {
     }
 
     public void powerLaunch(){
-        launcherL.setPower(0.45);
-        launcherR.setPower(0.45);
+        launcherL.setPower(0.37);
+        launcherR.setPower(0.37);
     }
 
     public void propel() throws InterruptedException {
         propeller.setPosition(0.1);
-        Thread.sleep(765);
+        Thread.sleep(790);
         propeller.setPosition(0.5);
-//        Thread.sleep(25);
+        Thread.sleep(600);
+    }
+
+    public void knockIntake(){
+        intakeServo.setPosition(0.1);
+    }
+
+    public void unknockIntake(){
+        intakeServo.setPosition(1);
     }
 
     public void towerHandUp(){
@@ -224,24 +233,7 @@ public class OmniDriveTrainV2 {
             gyroAngle = gyroAngle - (3 * Math.PI / 2);
         }
         gyroAngle = -1 * gyroAngle;
-//
-//        if(gamepad1.right_bumper){ //Disables gyro, sets to -Math.PI/2 so front is defined correctly.
-//            gyroAngle = -Math.PI/2;
-//        }
 
-//        //Linear directions in case you want to do straight lines.
-//        if(gamepad1.dpad_right){
-//            stick_x = 0.5;
-//        }
-//        else if(gamepad1.dpad_left){
-//            stick_x = -0.5;
-//        }
-//        if(gamepad1.dpad_up){
-//            stick_y = -0.5;
-//        }
-//        else if(gamepad1.dpad_down){
-//            stick_y = 0.5;
-//        }
 
 
 
@@ -251,13 +243,21 @@ public class OmniDriveTrainV2 {
         Py = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta - Math.PI / 4));
 
 
-        telemetry.addData("Stick_X", stick_x);
-        telemetry.addData("Stick_Y", stick_y);
-        telemetry.addData("Magnitude",  Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));
-        telemetry.addData("Front Left", Py - Protate);
-        telemetry.addData("Back Left", Px - Protate);
-        telemetry.addData("Back Right", Py + Protate);
-        telemetry.addData("Front Right", Px + Protate);
+//        telemetry.addData("servo bruh", intakeServo.getPosition());
+//        telemetry.addData("Stick_X", stick_x);
+//        telemetry.addData("Stick_Y", stick_y);
+//        telemetry.addData("Magnitude",  Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));
+//        telemetry.addData("Front Left", Py - Protate);
+//        telemetry.addData("Back Left", Px - Protate);
+//        telemetry.addData("Back Right", Py + Protate);
+//        telemetry.addData("Front Right", Px + Protate);
+
+        if (launcherL.getPower() > 0.4){
+            telemetry.addData("GO!!!!!!!", launcherL.getPower());
+        }
+        else{
+            telemetry.addData("wait", launcherL.getPower());
+        }
 
         frontLeftWheel.setPower(Py - Protate);
         backLeftWheel.setPower(Px - Protate);

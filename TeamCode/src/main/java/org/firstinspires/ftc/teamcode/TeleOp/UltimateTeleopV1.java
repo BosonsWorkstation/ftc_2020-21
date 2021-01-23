@@ -49,7 +49,7 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
             crabValue = -gamepad1.left_stick_x;
             moveValue = gamepad1.left_stick_y;
-            turnValue = gamepad1.right_stick_x;
+            turnValue = -gamepad1.right_stick_x;
 
             if (Math.abs(moveValue) < 0.1 && Math.abs(crabValue) < 0.1 && Math.abs(crabValue) < 0.1) {
                 this.driveTrain2.stop();
@@ -63,19 +63,27 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 this.driveTrain2.resetAngle();
             }
 
-//            if (gamepad2.left_trigger > 0.3){
-//                this.driveTrain2.intake();
-//            }
+            if(gamepad2.b){
+                this.driveTrain2.knockIntake();
+            }
 
-//            if(gamepad2.left_bumper){
-//                this.driveTrain2.outtake();
-//            }
+            if(gamepad2.x){
+                this.driveTrain2.unknockIntake();
+            }
 
-            if(gamepad2.left_trigger < 0.3 && !gamepad2.left_bumper){
+            if (gamepad1.right_trigger > 0.3){
+                this.driveTrain2.intake();
+            }
+
+            if(gamepad1.left_trigger > 0.3){
+                this.driveTrain2.outtake();
+            }
+
+            if(gamepad1.left_trigger < 0.3 && gamepad1.right_trigger < 0.3){
                 this.driveTrain2.intakeStop();
             }
 
-            //trying to do both propellor and launcher simultaneously, will likely need redesign
+
             if(gamepad2.right_trigger > 0.3){
               this.driveTrain2.launch();
             }
@@ -96,10 +104,10 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 //this.driveTrain2.propel
             }
 
-            if(gamepad2.dpad_up){
+            if(gamepad2.dpad_right){
                 this.driveTrain2.towerHandUp();
             }
-            else if(gamepad2.dpad_down){
+            else if(gamepad2.dpad_left){
                 this.driveTrain2.towerHandDown();
             }
             else{

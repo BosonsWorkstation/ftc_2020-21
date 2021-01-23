@@ -28,14 +28,15 @@ public class AutoShootV1 extends LinearOpMode {
             if(!parked) {
 
                 this.autoOmni.launch();
-            this.autoOmni.move(500, 0.4);
+//            this.autoOmni.move(500, 0.4);
             Thread.sleep(300);
-            this.autoOmni.crab(500, 0.4);
+//            this.autoOmni.crab(500, 0.4);
+//            Thread.sleep(300);
+            this.autoOmni.move(2800, 0.4);
             Thread.sleep(300);
-            this.autoOmni.move(2400, 0.4);
+            this.autoOmni.crab(-625, 0.4);
             Thread.sleep(300);
-            this.autoOmni.crab(-500, 0.4);
-            Thread.sleep(300);
+            this.autoOmni.rotate(100, 0.4);
 
             this.autoOmni.propel();
             Thread.sleep(300);
@@ -45,8 +46,21 @@ public class AutoShootV1 extends LinearOpMode {
             Thread.sleep(300);
             this.autoOmni.propel();
 
-            this.autoOmni.move(400, 0.4);
 
+//            this.autoOmni.towerHandUp();
+//            Thread.sleep(500);
+
+            this.autoOmni.launchStop();
+
+            this.autoOmni.move(650, 0.4);
+            this.autoOmni.towerHandUp();
+//            Thread.sleep(4000);
+//            this.autoOmni.towerHandStop();
+//            Thread.sleep(100);
+            Thread.sleep(100);
+            this.autoOmni.knockIntake();
+            Thread.sleep(100);
+            this.autoOmni.unknockIntake();
             }
 
             Thread.sleep(50);
