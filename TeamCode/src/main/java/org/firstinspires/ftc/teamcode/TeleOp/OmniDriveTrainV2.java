@@ -217,7 +217,7 @@ public class OmniDriveTrainV2 {
 
     public void drive(double moveValue, double crabValue, double turnValue) {
 
-        double Protate = turnValue/4;
+        double Protate = turnValue - 0.2;
         double stick_x = crabValue * Math.sqrt(Math.pow(1-Math.abs(Protate), 2)/2); //Accounts for Protate when limiting magnitude to be less than 1
         double stick_y = moveValue * Math.sqrt(Math.pow(1-Math.abs(Protate), 2)/2);
         double theta = 0;
@@ -245,7 +245,7 @@ public class OmniDriveTrainV2 {
 
 //        telemetry.addData("servo bruh", intakeServo.getPosition());
 //        telemetry.addData("Stick_X", stick_x);
-//        telemetry.addData("Stick_Y", stick_y); 
+//        telemetry.addData("Stick_Y", stick_y);
 //        telemetry.addData("Magnitude",  Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));
 //        telemetry.addData("Front Left", Py - Protate);
 //        telemetry.addData("Back Left", Px - Protate);
