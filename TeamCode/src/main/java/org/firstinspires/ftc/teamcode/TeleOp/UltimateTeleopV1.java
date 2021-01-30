@@ -46,18 +46,43 @@ public class UltimateTeleopV1 extends LinearOpMode {
             double crabValue = 0;
             double moveValue = 0;
             double turnValue = 0;
+            double maxPower = 0.8;
 
-            crabValue = -gamepad1.left_stick_x;
-            moveValue = gamepad1.left_stick_y;
-            turnValue = -gamepad1.right_stick_x;
+
+
+
+            if(gamepad1.left_bumper){
+                maxPower = 0.4;
+
+                crabValue = -gamepad1.left_stick_x / 1.5;
+                moveValue = gamepad1.left_stick_y / 1.5;
+                turnValue = -gamepad1.right_stick_x / 4;
+            }
+            else{
+                maxPower = 0.8;
+
+                crabValue = -gamepad1.left_stick_x * 1.5;
+                moveValue = gamepad1.left_stick_y * 1.5;
+                turnValue = -gamepad1.right_stick_x;
+            }
+
+
 
             if (Math.abs(moveValue) < 0.1 && Math.abs(crabValue) < 0.1 && Math.abs(crabValue) < 0.1) {
                 this.driveTrain2.stop();
             }
 
 
-            this.driveTrain2.drive(crabValue, moveValue, turnValue);
+            this.driveTrain2.drive(crabValue, moveValue, turnValue, maxPower);
             idle();
+
+            if(gamepad2.left_bumper){
+                this.driveTrain2.towerOpen();
+            }
+
+            if(gamepad2.right_bumper){
+                this.driveTrain2.towerClose();
+            }
 
             if (gamepad1.a){
                 this.driveTrain2.resetAngle();
@@ -97,17 +122,22 @@ public class UltimateTeleopV1 extends LinearOpMode {
             }
 
 
+
+
             if(gamepad2.y){
-              this.driveTrain2.propel();
+                this.driveTrain2.propeller.setPosition(0.1);
+                Thread.sleep(790);
+                this.driveTrain2.propeller.setPosition(0.5);
+                Thread.sleep(600);
             }
             if(!gamepad2.y){
                 //this.driveTrain2.propel
             }
 
-            if(gamepad2.dpad_right){
+            if(gamepad2.dpad_left){
                 this.driveTrain2.towerHandUp();
             }
-            else if(gamepad2.dpad_left){
+            else if(gamepad2.dpad_right){
                 this.driveTrain2.towerHandDown();
             }
             else{

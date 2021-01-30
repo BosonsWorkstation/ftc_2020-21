@@ -11,7 +11,7 @@ public class AutoShootV1 extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
-        this.autoOmni.initMotors();
+        this.autoOmni.initMotors(hardwareMap, telemetry);
         boolean parked = false;
 
         waitForStart();
@@ -27,23 +27,29 @@ public class AutoShootV1 extends LinearOpMode {
 
             if(!parked) {
 
-                this.autoOmni.launch();
+
 //            this.autoOmni.move(500, 0.4);
-            Thread.sleep(300);
+                Thread.sleep(300);
 //            this.autoOmni.crab(500, 0.4);
 //            Thread.sleep(300);
-            this.autoOmni.move(2800, 0.4);
-            Thread.sleep(300);
-            this.autoOmni.crab(-625, 0.4);
-            Thread.sleep(300);
-            this.autoOmni.rotate(100, 0.4);
+//                this.autoOmni.move(4000, 0.4);
+                this.autoOmni.move(2850, 0.4);
+                Thread.sleep(1000);
+                this.autoOmni.crab(-500, 0.4);
+                Thread.sleep(1000);
+//            this.autoOmni.rotate(100, 0.4);
+                Thread.sleep(400);
+
+                this.autoOmni.launch();
+
+                Thread.sleep(4000);
 
             this.autoOmni.propel();
-            Thread.sleep(300);
+            Thread.sleep(2000);
             this.autoOmni.propel();
-            Thread.sleep(300);
+            Thread.sleep(2000);
             this.autoOmni.propel();
-            Thread.sleep(300);
+            Thread.sleep(2000);
             this.autoOmni.propel();
 
 
@@ -54,9 +60,9 @@ public class AutoShootV1 extends LinearOpMode {
 
             this.autoOmni.move(650, 0.4);
             this.autoOmni.towerHandUp();
-//            Thread.sleep(4000);
-//            this.autoOmni.towerHandStop();
-//            Thread.sleep(100);
+            Thread.sleep(4000);
+            this.autoOmni.towerHandStop();
+            Thread.sleep(100);
             Thread.sleep(100);
             this.autoOmni.knockIntake();
             Thread.sleep(100);

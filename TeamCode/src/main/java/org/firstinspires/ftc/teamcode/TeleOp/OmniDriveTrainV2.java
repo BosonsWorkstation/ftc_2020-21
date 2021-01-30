@@ -17,11 +17,13 @@ import static java.lang.Thread.sleep;
 
 
 public class OmniDriveTrainV2 {
+
     protected DcMotor backRightWheel;
     protected DcMotor backLeftWheel;
     protected DcMotor frontRightWheel;
     protected DcMotor frontLeftWheel;
     protected DcMotor towerHand;
+    protected Servo towerGrasp;
     protected DcMotor intake;
     protected DcMotor launcherL;
     protected DcMotor launcherR;
@@ -81,6 +83,7 @@ public class OmniDriveTrainV2 {
         this.launcherR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.propeller = hardwareMap.servo.get("Propeller");
         this.intakeServo = hardwareMap.servo.get("Intake_Servo");
+        this.towerGrasp = hardwareMap.servo.get("Tower_Grasp");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
@@ -97,7 +100,7 @@ public class OmniDriveTrainV2 {
         backRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         towerHand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
+        }
 
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
         if(!gyroInitialized) {
@@ -168,12 +171,19 @@ public class OmniDriveTrainV2 {
     }
 
     public void intake(){
-        intake.setPower(0.7);
+        intake.setPower(0.8);
+    }
+
+    public void towerOpen(){
+        this.towerGrasp.setPosition(0.5);
+    }
+    public void towerClose(){
+        this.towerGrasp.setPosition(0);
     }
 
     public void launch(){
-       launcherL.setPower(0.43);
-       launcherR.setPower(0.43);
+       launcherL.setPower(0.53);
+       launcherR.setPower(0.53);
     }
 
     public void launchStop(){
@@ -183,8 +193,8 @@ public class OmniDriveTrainV2 {
     }
 
     public void powerLaunch(){
-        launcherL.setPower(0.37);
-        launcherR.setPower(0.37);
+        launcherL.setPower(0.4);
+        launcherR.setPower(0.4);
     }
 
     public void propel() throws InterruptedException {
@@ -203,11 +213,11 @@ public class OmniDriveTrainV2 {
     }
 
     public void towerHandUp(){
-        towerHand.setPower(0.6);
+        towerHand.setPower(0.1);
     }
 
     public void towerHandDown(){
-        towerHand.setPower(-0.6);
+        towerHand.setPower(-0.1);
     }
 
     public void towerHandStop(){
@@ -215,9 +225,9 @@ public class OmniDriveTrainV2 {
     }
 
 
-    public void drive(double moveValue, double crabValue, double turnValue) {
+    public void drive(double moveValue, double crabValue, double turnValue, double maxPower) {
 
-        double Protate = turnValue - 0.2;
+        double Protate = turnValue;
         double stick_x = crabValue * Math.sqrt(Math.pow(1-Math.abs(Protate), 2)/2); //Accounts for Protate when limiting magnitude to be less than 1
         double stick_y = moveValue * Math.sqrt(Math.pow(1-Math.abs(Protate), 2)/2);
         double theta = 0;
@@ -238,12 +248,20 @@ public class OmniDriveTrainV2 {
 
 
         //MOVEMENT
-        theta = Math.atan2(stick_y, stick_x) - gyroAngle - (Math.PI / 2);
-        Px = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta + Math.PI / 4));
-        Py = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta - Math.PI / 4));
+//        if (maxPower == 0.8) {
+            theta = Math.atan2(stick_y, stick_x) - gyroAngle - (Math.PI / 2);
+            Px = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta + Math.PI / 4));
+            Py = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta - Math.PI / 4));
+//        }
+
+//        if (maxPower == 0.4){
+//            theta = Math.atan2(stick_y/2, stick_x/2) - gyroAngle - (Math.PI / 2);
+//            Px = Math.sqrt(Math.pow(stick_x/2, 2) + Math.pow(stick_y/2, 2)) * (Math.sin(theta + Math.PI / 4));
+//            Py = Math.sqrt(Math.pow(stick_x/2, 2) + Math.pow(stick_y/2, 2)) * (Math.sin(theta - Math.PI / 4));
+//        }
 
 
-//        telemetry.addData("servo bruh", intakeServo.getPosition());
+        telemetry.addData("tower grabber", towerGrasp.getPosition());
 //        telemetry.addData("Stick_X", stick_x);
 //        telemetry.addData("Stick_Y", stick_y);
 //        telemetry.addData("Magnitude",  Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));

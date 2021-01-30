@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous(name = "Ring Detect!", group = "Linear Opmode")
-public class RingDetect extends LinearOpMode
+public class RingDetect extends EasyOpenCV
 {
 
     private AutoOmniDriveTrainV1 autoOmni;
@@ -30,7 +30,7 @@ public class RingDetect extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
-        this.autoOmni.initMotors();
+        this.autoOmni.initMotors(hardwareMap, telemetry);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -55,7 +55,7 @@ public class RingDetect extends LinearOpMode
 
         while (opModeIsActive())
         {
-            wait(2000);
+            Thread.sleep(2000);
             if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
                 this.autoOmni.move(-300, 0.4);
             }
