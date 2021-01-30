@@ -125,10 +125,11 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
             if(gamepad2.y){
-                this.driveTrain2.propeller.setPosition(0.1);
-                Thread.sleep(790);
-                this.driveTrain2.propeller.setPosition(0.5);
-                Thread.sleep(600);
+                this.runPropeller(this.driveTrain2);
+//                this.driveTrain2.propeller.setPosition(0.1);
+//                Thread.sleep(790);
+//                this.driveTrain2.propeller.setPosition(0.5);
+//                Thread.sleep(600);
             }
             if(!gamepad2.y){
                 //this.driveTrain2.propel
@@ -155,6 +156,26 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
     }
+    private void runPropeller(final OmniDriveTrainV2 driveTrain2) {
+        Thread t1 = new Thread(new Runnable(){
+           @Override
+           public void run(){
+
+                try {
+                    driveTrain2.propeller.setPosition(0.1);
+                    Thread.sleep(790);
+                    driveTrain2.propeller.setPosition(0.5);
+                    Thread.sleep(600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        t1.start();
+
+    }
+
 
 }
 
