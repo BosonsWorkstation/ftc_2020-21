@@ -25,12 +25,13 @@ public class RingDetect extends EasyOpenCV
     private AutoOmniDriveTrainV1 autoOmni;
 
     OpenCvInternalCamera phoneCam;
-    SkystoneDeterminationPipeline pipeline;
+    SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
+
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode()  {
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
-        this.autoOmni.initMotors(hardwareMap, telemetry);
+       this.autoOmni.initMotors(hardwareMap, telemetry);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -55,16 +56,17 @@ public class RingDetect extends EasyOpenCV
 
         while (opModeIsActive())
         {
-            Thread.sleep(2000);
-            if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
-                this.autoOmni.move(-300, 0.4);
+            sleep(2000);
+            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
+                this.autoOmni.lightsBlue();
             }
 
-            if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE){
-                this.autoOmni.move(300, 0.4);
+            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
+                this.autoOmni.lightsGreen();
             }
-            if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE){
-             this.autoOmni.stopNow();
+
+            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
+                this.autoOmni.lightsRed();
             }
 
 
@@ -125,7 +127,7 @@ public class RingDetect extends EasyOpenCV
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile RingPosition position = RingPosition.FOUR;
+        public volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,6 +20,7 @@ public class AutoOmniDriveTrainV1{
     protected Servo propeller;
     protected Servo intakeServo;
     protected DcMotor towerHand;
+    protected  RevBlinkinLedDriver lights;
 
     private BNO055IMU imu;
     private double lastPower = 0;
@@ -53,7 +55,11 @@ public class AutoOmniDriveTrainV1{
     }
 
 
-    public void initMotors(HardwareMap hardwareMap, Telemetry telemetry){
+    private void initDriveMotors(HardwareMap hardwareMap, Telemetry telemetry){
+        this.backLeftWheel = hardwareMap.dcMotor.get("Back_Left_Wheel");
+        this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
+        this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
+        this.frontRightWheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
         this.initMotor(frontLeftWheel);
 
         this.initMotor(frontRightWheel);
@@ -61,29 +67,42 @@ public class AutoOmniDriveTrainV1{
         this.initMotor(backLeftWheel);
 
         this.initMotor(backRightWheel);
+    }
 
-        launcherL.setDirection(DcMotor.Direction.REVERSE);
-        this.backLeftWheel = hardwareMap.dcMotor.get("Back_Left_Wheel");
-        this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
-        this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
-        this.frontRightWheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
+    private void initLauncher(HardwareMap hardwareMap, Telemetry telemetry){
         this.launcherL = hardwareMap.dcMotor.get("Launcher_Left");
         this.launcherR = hardwareMap.dcMotor.get("Launcher_Right");
         this.launcherL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.launcherR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        launcherL.setDirection(DcMotor.Direction.REVERSE);
         this.propeller = hardwareMap.servo.get("Propeller");
-        this.intakeServo = hardwareMap.servo.get("Intake_Servo");
-        this.towerHand = hardwareMap.dcMotor.get("Tower_Hand");
-
-
     }
+
+    private void initIntake(HardwareMap hardwareMap, Telemetry telemetry){
+        this.intakeServo = hardwareMap.servo.get("Intake_Servo");
+    }
+
+    private void initTowerHand(HardwareMap hardwareMap, Telemetry telemetry){
+        this.towerHand = hardwareMap.dcMotor.get("Tower_Hand");
+    }
+
+    private void initLights(HardwareMap hardwareMap, Telemetry telemetry){
+        this.lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
+    }
+
+    public void initMotors(HardwareMap hardwareMap, Telemetry telemetry){
+
+        this.initDriveMotors(hardwareMap,telemetry);
+        this.initLauncher(hardwareMap, telemetry);
+        this.initIntake(hardwareMap, telemetry);
+        this.initTowerHand(hardwareMap, telemetry);
+        this.initLights(hardwareMap, telemetry);
+        }
 
     private void initMotor(DcMotor motor) {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
     }
 
     public int getTargetValue(int distance){
@@ -94,7 +113,7 @@ public class AutoOmniDriveTrainV1{
         return targetValue;
     }
 
-    public void  moveDistance (int distance) throws InterruptedException {
+    public void  moveDistance (int distance)  {
         int direction = distance > 0 ? -1 : 1;
         int targetValue = getTargetValue(distance);
         int currentPosition = 0;
@@ -243,13 +262,33 @@ public class AutoOmniDriveTrainV1{
     }
 
 
-    public void propel() throws InterruptedException{
-
-        propeller.setPosition(0.1);
-        Thread.sleep(790);
-        propeller.setPosition(0.5);
+    public void propel(){
 
 
+        try {
+            propeller.setPosition(0.1);
+            Thread.sleep(790);
+            propeller.setPosition(0.5);
+        }
+        catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+        }
+
+
+
+
+    }
+
+    public void lightsGreen(){
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+    }
+
+    public void lightsRed(){
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
+    }
+
+    public void lightsBlue(){
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
     }
 
 }

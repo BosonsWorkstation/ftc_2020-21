@@ -144,6 +144,13 @@ public class UltimateTeleopV1 extends LinearOpMode {
             else{
                 this.driveTrain2.towerHandStop();
             }
+            if(gamepad2.dpad_up){
+                this.driveTrain2.lightsRed();
+            }
+
+            if(gamepad2.dpad_down){
+                this.driveTrain2.lightsOff();
+            }
         }
         telemetry.update();
 

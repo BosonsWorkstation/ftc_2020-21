@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class AutoShootV1 extends LinearOpMode {
     private AutoOmniDriveTrainV1 autoOmni;
     private static final long INITIAL_WAIT = 1000;
-
-    public void runOpMode() throws InterruptedException {
+    @Override
+    public void runOpMode() {
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
         this.autoOmni.initMotors(hardwareMap, telemetry);
         boolean parked = false;
@@ -21,7 +21,7 @@ public class AutoShootV1 extends LinearOpMode {
 
 
 
-            Thread.sleep(INITIAL_WAIT);
+            sleep(INITIAL_WAIT);
 
 
 
@@ -29,27 +29,27 @@ public class AutoShootV1 extends LinearOpMode {
 
 
 //            this.autoOmni.move(500, 0.4);
-                Thread.sleep(300);
+                sleep(300);
 //            this.autoOmni.crab(500, 0.4);
 //            Thread.sleep(300);
 //                this.autoOmni.move(4000, 0.4);
                 this.autoOmni.move(2850, 0.4);
-                Thread.sleep(1000);
+                sleep(1000);
                 this.autoOmni.crab(-500, 0.4);
-                Thread.sleep(1000);
+                sleep(1000);
 //            this.autoOmni.rotate(100, 0.4);
-                Thread.sleep(400);
+                sleep(400);
 
                 this.autoOmni.launch();
 
-                Thread.sleep(4000);
+                sleep(4000);
 
             this.autoOmni.propel();
-            Thread.sleep(2000);
+            sleep(2000);
             this.autoOmni.propel();
-            Thread.sleep(2000);
+            sleep(2000);
             this.autoOmni.propel();
-            Thread.sleep(2000);
+            sleep(2000);
             this.autoOmni.propel();
 
 
@@ -60,16 +60,16 @@ public class AutoShootV1 extends LinearOpMode {
 
             this.autoOmni.move(650, 0.4);
             this.autoOmni.towerHandUp();
-            Thread.sleep(4000);
+            sleep(4000);
             this.autoOmni.towerHandStop();
-            Thread.sleep(100);
-            Thread.sleep(100);
+            sleep(100);
+            sleep(100);
             this.autoOmni.knockIntake();
-            Thread.sleep(100);
+            sleep(100);
             this.autoOmni.unknockIntake();
             }
 
-            Thread.sleep(50);
+            sleep(50);
             parked = true;
         }
 

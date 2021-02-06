@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -29,6 +30,7 @@ public class OmniDriveTrainV2 {
     protected DcMotor launcherR;
     protected Servo propeller;
     protected Servo intakeServo;
+    protected  RevBlinkinLedDriver lights;
 
 
 
@@ -79,6 +81,7 @@ public class OmniDriveTrainV2 {
         this.intake = hardwareMap.dcMotor.get("Intake");
         this.launcherL = hardwareMap.dcMotor.get("Launcher_Left");
         this.launcherR = hardwareMap.dcMotor.get("Launcher_Right");
+        this.lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
         this.launcherL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.launcherR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.propeller = hardwareMap.servo.get("Propeller");
@@ -101,7 +104,7 @@ public class OmniDriveTrainV2 {
         backLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         towerHand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
- 
+
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
         if(!gyroInitialized) {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -122,6 +125,13 @@ public class OmniDriveTrainV2 {
         frontLeftWheel.setPower(0);
         backRightWheel.setPower(0);
         backLeftWheel.setPower(0);
+    }
+
+    public void lightsOff(){
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+    }
+    public void lightsRed(){
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
     }
 
     public void resetAngle(){
