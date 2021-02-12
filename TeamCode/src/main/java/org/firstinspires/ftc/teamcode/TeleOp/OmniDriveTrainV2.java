@@ -91,8 +91,8 @@ public class OmniDriveTrainV2 {
         this.propeller = hardwareMap.servo.get("Propeller");
         this.intakeServo = hardwareMap.servo.get("Intake_Servo");
         this.towerGrasp = hardwareMap.servo.get("Tower_Grasp");
-        this.leftColor = hardwareMap.colorSensor.get("Color_Left");
-        this.rightColor = hardwareMap.colorSensor.get("Color_Right");
+        this.leftColor = hardwareMap.get(ColorSensor.class, "Color_Left");
+        this.rightColor = hardwareMap.get(ColorSensor.class, "Color_Right");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
