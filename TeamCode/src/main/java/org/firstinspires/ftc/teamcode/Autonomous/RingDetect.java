@@ -28,10 +28,12 @@ public class RingDetect extends EasyOpenCV
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
 
 
+
     @Override
     public void runOpMode()  {
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
        this.autoOmni.initMotors(hardwareMap, telemetry);
+
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -56,27 +58,35 @@ public class RingDetect extends EasyOpenCV
 
         while (opModeIsActive())
         {
-            sleep(2000);
+            sleep(1000);
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
-                this.autoOmni.lightsBlue();
+                lineDetect();
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-                this.autoOmni.lightsGreen();
+
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
-                this.autoOmni.lightsRed();
+                this.autoOmni.launch();
             }
 
-
-
+//            telemetry.addData("Left Color Val", this.autoOmni.leftColor.getI2cAddress());
+//            telemetry.addData("Right Color Val", this.autoOmni.rightColor.blue());
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("Position", pipeline.position);
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
-//            sleep(50);
+            sleep(50);
+        }
+    }
+    public void lineDetect(){
+        this.autoOmni.crab(-1000, 0.4);
+        sleep(100);
+        this.autoOmni.move(6000, 0.4);
+        while (this.autoOmni.leftColor.argb() < 4){
+            this.autoOmni.movePower(0.3);
         }
     }
 
@@ -101,15 +111,15 @@ public class RingDetect extends EasyOpenCV
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(90,30);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(195,50);
 
 
         //WE HAVE DOUBLED THIS FOR TESTING, THE ORIGINAL VALUES ARE 35 AND 25!!!!!!!!! -Shawn
-        static final int REGION_WIDTH = 150;
-        static final int REGION_HEIGHT = 170;
+        static final int REGION_WIDTH = 80;
+        static final int REGION_HEIGHT = 70;
 
         final int FOUR_RING_THRESHOLD = 140;
-        final int ZERO_RING_THRESHOLD = 125;
+        final int ZERO_RING_THRESHOLD = 128;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,

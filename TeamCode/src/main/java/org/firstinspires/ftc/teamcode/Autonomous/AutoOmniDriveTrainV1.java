@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.TeleOp.OmniDriveTrainV2;
@@ -21,6 +23,8 @@ public class AutoOmniDriveTrainV1{
     protected Servo intakeServo;
     protected DcMotor towerHand;
     protected  RevBlinkinLedDriver lights;
+    protected ColorSensor leftColor;
+    protected ColorSensor rightColor;
 
     private BNO055IMU imu;
     private double lastPower = 0;
@@ -90,6 +94,11 @@ public class AutoOmniDriveTrainV1{
         this.lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
     }
 
+    private void initColor(HardwareMap hardwareMap, Telemetry telemetry){
+        this.leftColor = hardwareMap.colorSensor.get("Color_Left");
+        this.rightColor = hardwareMap.colorSensor.get("Color_Right");
+    }
+
     public void initMotors(HardwareMap hardwareMap, Telemetry telemetry){
 
         this.initDriveMotors(hardwareMap,telemetry);
@@ -113,15 +122,11 @@ public class AutoOmniDriveTrainV1{
         return targetValue;
     }
 
-    public void  moveDistance (int distance)  {
-        int direction = distance > 0 ? -1 : 1;
-        int targetValue = getTargetValue(distance);
-        int currentPosition = 0;
-//        this.setMoveMotorDirection(direction);
-        boolean done = false;
-
-
-        this.stopNow();
+    public void  movePower (double power)  {
+        frontLeftWheel.setPower(-power);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(-power);
+        backRightWheel.setPower(power);
     }
     public void towerHandUp(){
         towerHand.setPower(-0.8);
@@ -159,11 +164,11 @@ public class AutoOmniDriveTrainV1{
         backRightWheel.setPower(power);
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
-            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
-            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
-            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
-            telemetry.update();
+//            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
+//            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
+//            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
+//            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
+//            telemetry.update();
         }
 
         stopNow();
@@ -199,11 +204,11 @@ public class AutoOmniDriveTrainV1{
         backRightWheel.setPower(power);
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
-            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
-            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
-            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
-            telemetry.update();
+//            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
+//            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
+//            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
+//            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
+//            telemetry.update();
         }
 
         stopNow();
@@ -242,11 +247,11 @@ public class AutoOmniDriveTrainV1{
         backRightWheel.setPower(power);
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
-            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
-            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
-            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
-            telemetry.update();
+//            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
+//            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
+//            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
+//            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
+//            telemetry.update();
         }
 
         stopNow();

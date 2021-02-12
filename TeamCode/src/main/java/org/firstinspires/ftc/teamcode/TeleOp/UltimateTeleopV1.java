@@ -121,6 +121,10 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 this.driveTrain2.launchStop();
             }
 
+            if(gamepad2.left_stick_y > 0.2 || gamepad2.left_stick_y < -0.2){
+              this.driveTrain2.intakePower(gamepad2.left_stick_y);
+            }
+
 
 
 
@@ -157,7 +161,7 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
 
-
+        telemetry.addData("Intake Power", this.driveTrain2.intake.getPower());
         telemetry.update();
         Thread.sleep(50);
 

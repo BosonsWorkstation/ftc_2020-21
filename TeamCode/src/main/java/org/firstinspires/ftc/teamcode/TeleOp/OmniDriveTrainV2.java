@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -31,6 +33,8 @@ public class OmniDriveTrainV2 {
     protected Servo propeller;
     protected Servo intakeServo;
     protected  RevBlinkinLedDriver lights;
+    protected ColorSensor leftColor;
+    protected ColorSensor rightColor;
 
 
 
@@ -87,6 +91,8 @@ public class OmniDriveTrainV2 {
         this.propeller = hardwareMap.servo.get("Propeller");
         this.intakeServo = hardwareMap.servo.get("Intake_Servo");
         this.towerGrasp = hardwareMap.servo.get("Tower_Grasp");
+        this.leftColor = hardwareMap.colorSensor.get("Color_Left");
+        this.rightColor = hardwareMap.colorSensor.get("Color_Right");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
@@ -182,6 +188,10 @@ public class OmniDriveTrainV2 {
 
     public void intake(){
         intake.setPower(0.8);
+    }
+
+    public void intakePower(double power){
+        intake.setPower(power);
     }
 
     public void towerOpen(){
@@ -291,6 +301,9 @@ public class OmniDriveTrainV2 {
         backLeftWheel.setPower(Px - Protate);
         backRightWheel.setPower(Py + Protate);
         frontRightWheel.setPower(Px + Protate);
+
+        telemetry.addData("Color Val L", leftColor.argb());
+        telemetry.addData("Color Val L", rightColor.argb());
 
         telemetry.update();
     }

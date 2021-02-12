@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import android.icu.text.UFormat;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.R;
 
 @TeleOp(name = "Vuforia Basics V2", group = "Linear Opmode")
+@Disabled
 public class VuforiaBasicsV2 extends LinearOpMode{
 final double TARGET_DISTANCE = 400.00; // robot's center set to 400mm from target
     private OmniDriveTrainV2 driveTrain2;

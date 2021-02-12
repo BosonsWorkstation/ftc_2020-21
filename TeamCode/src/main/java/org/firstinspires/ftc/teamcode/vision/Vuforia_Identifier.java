@@ -86,6 +86,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 @Autonomous(name="ULTIMATEGOAL Vuforia Nav", group ="Concept")
+@Disabled
 public class Vuforia_Identifier extends LinearOpMode {
 
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:

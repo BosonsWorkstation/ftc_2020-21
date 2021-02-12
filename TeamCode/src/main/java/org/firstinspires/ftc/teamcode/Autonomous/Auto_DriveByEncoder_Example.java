@@ -48,6 +48,7 @@ import org.firstinspires.ftc.teamcode.HardwareMap.HardwareMap_Example;
  */
 // CHAWKS: Name it something useful!
 @Autonomous(name="RedZone Right 1 Test", group="RedTest")
+@Disabled
 // CHAWKS: What does @Disabled mean? what happens if we remove it?
 //@Disabled
 
