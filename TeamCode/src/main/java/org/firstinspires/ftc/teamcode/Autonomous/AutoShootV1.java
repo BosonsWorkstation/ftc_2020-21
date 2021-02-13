@@ -11,7 +11,7 @@ public class AutoShootV1 extends LinearOpMode {
     @Override
     public void runOpMode() {
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
-        this.autoOmni.initMotors(hardwareMap, telemetry);
+        this.autoOmni.initialize(hardwareMap, telemetry);
         boolean parked = false;
 
         waitForStart();

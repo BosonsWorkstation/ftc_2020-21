@@ -34,8 +34,9 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 //
 //        telemetry.addData("Mode", "calibrating...");
-        telemetry.update();
+//        telemetry.update();
         this.driveTrain2.getHeading();
+        this.driveTrain2.resetAngle();
 
         waitForStart();
 
@@ -156,7 +157,6 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 this.driveTrain2.lightsOff();
             }
         }
-        telemetry.update();
 
 
 

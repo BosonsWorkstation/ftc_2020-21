@@ -52,6 +52,8 @@ public class OmniDriveTrainV2 {
     private Telemetry.Item leftBackTelemetry;
     private Telemetry.Item rightBackTelemetry;
     private Telemetry.Item usePowerTelemetry;
+    private Telemetry.Item colorLeftTelemetry;
+    private Telemetry.Item colorRightTelemetry;
 
     public enum DirectionEnum{
         NORTH(90), SOUTH(-90), EAST(180), WEST(0);
@@ -74,6 +76,8 @@ public class OmniDriveTrainV2 {
         this.leftBackTelemetry = telemetry.addData("LF Power", backLeftWheel.getPower());
         this.rightBackTelemetry = telemetry.addData("RB Power", backRightWheel.getPower());
         this.usePowerTelemetry = telemetry.addData("usePower", 0);
+        this.colorLeftTelemetry = telemetry.addData("Left Color Val", leftColor.argb());
+        this.colorRightTelemetry = telemetry.addData("Right Color Val", rightColor.argb());
     }
 
     public void initializeMotors(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -91,7 +95,7 @@ public class OmniDriveTrainV2 {
         this.propeller = hardwareMap.servo.get("Propeller");
         this.intakeServo = hardwareMap.servo.get("Intake_Servo");
         this.towerGrasp = hardwareMap.servo.get("Tower_Grasp");
-        this.leftColor = hardwareMap.get(ColorSensor.class, "Color_Left");
+        this.rightColor = hardwareMap.get(ColorSensor.class, "Color_Left");
         this.rightColor = hardwareMap.get(ColorSensor.class, "Color_Right");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
@@ -302,8 +306,9 @@ public class OmniDriveTrainV2 {
         backRightWheel.setPower(Py + Protate);
         frontRightWheel.setPower(Px + Protate);
 
-        telemetry.addData("Color Val L", leftColor.argb());
-        telemetry.addData("Color Val L", rightColor.argb());
+
+//        telemetry.addData("Color Val L", leftColor.argb());
+//        telemetry.addData("Color Val L", rightColor.argb());
 
         telemetry.update();
     }

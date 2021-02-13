@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -32,7 +34,7 @@ public class RingDetect extends EasyOpenCV
     @Override
     public void runOpMode()  {
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
-       this.autoOmni.initMotors(hardwareMap, telemetry);
+       this.autoOmni.initialize(hardwareMap, telemetry);
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -58,21 +60,34 @@ public class RingDetect extends EasyOpenCV
 
         while (opModeIsActive())
         {
+
             sleep(1000);
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
                 lineDetect();
+
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-
+                lineDetect();
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
-                this.autoOmni.launch();
+                lineDetect();
             }
 
-//            telemetry.addData("Left Color Val", this.autoOmni.leftColor.getI2cAddress());
-//            telemetry.addData("Right Color Val", this.autoOmni.rightColor.blue());
+
+            this.autoOmni.colorDetect();
+
+
+            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
+            telemetry.addData("Blue ", this.autoOmni.colorRight.blue());
+            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
+            telemetry.addData("Left Red Val", this.autoOmni.colorLeft.red());
+            telemetry.addData("Right Red Val", this.autoOmni.colorRight.red());
+            telemetry.addData("Left Blue Val", this.autoOmni.colorLeft.blue());
+            telemetry.addData("Right Blue Val", this.autoOmni.colorRight.blue());
+            telemetry.addData("Left Green Val", this.autoOmni.colorLeft.green());
+            telemetry.addData("Right Green Val", this.autoOmni.colorRight.green());
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("Position", pipeline.position);
             telemetry.update();
@@ -82,12 +97,34 @@ public class RingDetect extends EasyOpenCV
         }
     }
     public void lineDetect(){
-        this.autoOmni.crab(-1000, 0.4);
-        sleep(100);
-        this.autoOmni.move(6000, 0.4);
-        while (this.autoOmni.leftColor.argb() < 4){
-            this.autoOmni.movePower(0.3);
+//        this.autoOmni.crab(-1000, 0.4);
+//        sleep(100);
+//        this.autoOmni.move(4000, 0.4);
+
+        while(this.autoOmni.colorLeft.red() < 200 || this.autoOmni.colorRight.red() < 100){
+            if(this.autoOmni.colorLeft.red() > 200 && this.autoOmni.colorRight.red() > 100){
+                break;
+            }
+            if(this.autoOmni.colorLeft.red() > 200 ){
+                this.autoOmni.rightCorrect(0.1);
+            }
+            if (this.autoOmni.colorRight.red() > 100)
+            {
+                this.autoOmni.leftCorrect(0.1);
+            }
+            if(this.autoOmni.colorLeft.red() > 200 && this.autoOmni.colorRight.red() > 100){
+                break;
+            }
+
+            if (this.autoOmni.colorLeft.red() < 200 && this.autoOmni.colorRight.red() < 100){
+                this.autoOmni.movePower(0.3);
+            }
         }
+
+        this.autoOmni.stopNow();
+
+
+
     }
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline

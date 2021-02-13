@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,8 +25,10 @@ public class AutoOmniDriveTrainV1{
     protected Servo intakeServo;
     protected DcMotor towerHand;
     protected  RevBlinkinLedDriver lights;
-    protected ColorSensor leftColor;
-    protected ColorSensor rightColor;
+    protected ColorSensor colorLeft;
+    protected ColorSensor colorRight;
+    float hsvValues[] = {0F, 0F, 0F};
+    final float values[] = hsvValues; //these hsv values are for alphaColor()
 
     private BNO055IMU imu;
     private double lastPower = 0;
@@ -40,6 +44,7 @@ public class AutoOmniDriveTrainV1{
     private Telemetry.Item usePowerTelemetry;
 
     int position;
+    double getLeftColor;
     private static final double MOTOR_POWER = 0.5;
     private static final int TICKS_PER_REVOLUTION = 280;
     private static final double DISTANCE_PER_REVOLUTION = 4 * Math.PI;
@@ -95,23 +100,27 @@ public class AutoOmniDriveTrainV1{
     }
 
     private void initColor(HardwareMap hardwareMap, Telemetry telemetry){
-        this.leftColor = hardwareMap.colorSensor.get("Color_Left");
-        this.rightColor = hardwareMap.colorSensor.get("Color_Right");
+        this.colorLeft = hardwareMap.get(ColorSensor.class, "Color_Left");
+        this.colorRight = hardwareMap.get(ColorSensor.class, "Color_Right");
+
     }
 
-    public void initMotors(HardwareMap hardwareMap, Telemetry telemetry){
+    public void initialize(HardwareMap hardwareMap, Telemetry telemetry){
 
         this.initDriveMotors(hardwareMap,telemetry);
         this.initLauncher(hardwareMap, telemetry);
         this.initIntake(hardwareMap, telemetry);
         this.initTowerHand(hardwareMap, telemetry);
         this.initLights(hardwareMap, telemetry);
+        this.initColor(hardwareMap, telemetry);
+
         }
 
     private void initMotor(DcMotor motor) {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     public int getTargetValue(int distance){
@@ -120,6 +129,20 @@ public class AutoOmniDriveTrainV1{
 //        targetValueTel.setValue("%d", targetValue);
 //        telemetry.update();
         return targetValue;
+    }
+
+    public void rightCorrect(double power){
+        frontLeftWheel.setPower(0);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(0);
+        backRightWheel.setPower(power);
+    }
+
+    public void leftCorrect(double power){
+        frontLeftWheel.setPower(-power);
+        frontRightWheel.setPower(0);
+        backLeftWheel.setPower(-power);
+        backRightWheel.setPower(0);
     }
 
     public void  movePower (double power)  {
@@ -224,6 +247,8 @@ public class AutoOmniDriveTrainV1{
 
 
 
+
+
     public void move(int distance, double power){
         int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
         int frontRightPosition = frontRightWheel.getCurrentPosition();
@@ -257,6 +282,8 @@ public class AutoOmniDriveTrainV1{
         stopNow();
     }
 
+
+
     public void launch() {
         this.launcherL.setPower(0.53);
         this.launcherR.setPower(0.53);
@@ -282,6 +309,13 @@ public class AutoOmniDriveTrainV1{
 
 
 
+    }
+
+    public void colorDetect(){
+        Color.RGBToHSV((int) (colorRight.red() * 255.00),
+                (int) (colorRight.green() * 255.00),
+                (int) (colorRight.blue() * 255.00),
+                hsvValues);
     }
 
     public void lightsGreen(){
