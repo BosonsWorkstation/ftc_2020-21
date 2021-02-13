@@ -68,7 +68,7 @@ public class RingDetect extends EasyOpenCV
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-                lineDetect();
+                lineDetect(); 
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
