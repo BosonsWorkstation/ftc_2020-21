@@ -76,8 +76,8 @@ public class OmniDriveTrainV2 {
         this.leftBackTelemetry = telemetry.addData("LF Power", backLeftWheel.getPower());
         this.rightBackTelemetry = telemetry.addData("RB Power", backRightWheel.getPower());
         this.usePowerTelemetry = telemetry.addData("usePower", 0);
-        this.colorLeftTelemetry = telemetry.addData("Left Color Val", leftColor.argb());
-        this.colorRightTelemetry = telemetry.addData("Right Color Val", rightColor.argb());
+//        this.colorLeftTelemetry = telemetry.addData("Left Color Val", leftColor.argb());
+//        this.colorRightTelemetry = telemetry.addData("Right Color Val", rightColor.argb());
     }
 
     public void initializeMotors(HardwareMap hardwareMap, Telemetry telemetry) {

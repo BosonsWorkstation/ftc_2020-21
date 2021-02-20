@@ -181,8 +181,8 @@ public class AutoOmniDriveTrainV1{
         backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeftWheel.setPower(power);
-        frontRightWheel.setPower(power - correctionPower);
-//        frontRightWheel.setPower(power);
+//        frontRightWheel.setPower(power - correctionPower);
+        frontRightWheel.setPower(power);
         backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
 
@@ -221,8 +221,8 @@ public class AutoOmniDriveTrainV1{
         backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeftWheel.setPower(power);
-        frontRightWheel.setPower(power - correctionPower);
-//        frontRightWheel.setPower(power);
+//        frontRightWheel.setPower(power - correctionPower);
+        frontRightWheel.setPower(power);
         backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
 
@@ -266,8 +266,8 @@ public class AutoOmniDriveTrainV1{
         backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeftWheel.setPower(power);
-        frontRightWheel.setPower(power - correctionPower);
-//        frontRightWheel.setPower(power);
+//        frontRightWheel.setPower(power - correctionPower);
+        frontRightWheel.setPower(power);
         backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
 

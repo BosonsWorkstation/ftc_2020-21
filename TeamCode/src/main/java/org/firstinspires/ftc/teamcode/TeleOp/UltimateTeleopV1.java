@@ -39,6 +39,7 @@ public class UltimateTeleopV1 extends LinearOpMode {
         this.driveTrain2.resetAngle();
 
         waitForStart();
+        startPropellorControl(driveTrain2);
 
 
         while (opModeIsActive()) {
@@ -128,18 +129,6 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
 
-
-            if(gamepad2.y){
-                this.runPropeller(this.driveTrain2);
-//                this.driveTrain2.propeller.setPosition(0.1);
-//                Thread.sleep(790);
-//                this.driveTrain2.propeller.setPosition(0.5);
-//                Thread.sleep(600);
-            }
-            if(!gamepad2.y){
-                //this.driveTrain2.propel
-            }
-
             if(gamepad2.dpad_left){
                 this.driveTrain2.towerHandUp();
             }
@@ -167,21 +156,31 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
     }
-    private void runPropeller(final OmniDriveTrainV2 driveTrain2) {
+    private void startPropellorControl(final OmniDriveTrainV2 driveTrain2) {
         Thread t1 = new Thread(new Runnable(){
            @Override
-           public void run(){
+           public void run() {
+               boolean buttonPressed = false;
+               while (opModeIsActive()) {
 
-                try {
-                    driveTrain2.propeller.setPosition(0.1);
-                    Thread.sleep(790);
-                    driveTrain2.propeller.setPosition(0.5);
-                    Thread.sleep(600);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
+                   if(gamepad2.y){
+                       if(!buttonPressed) {
+                           driveTrain2.propeller.setPosition(0.1);
+                           sleep(790);
+                           driveTrain2.propeller.setPosition(0.5);
+                           sleep(600);
+                       }
+                       else{
+                           sleep(20);
+                       }
+                       buttonPressed = true;
+                   }
+                   else {
+                       sleep(20);
+                       buttonPressed = false;
+                   }
+               }
+           }
         });
         t1.start();
 

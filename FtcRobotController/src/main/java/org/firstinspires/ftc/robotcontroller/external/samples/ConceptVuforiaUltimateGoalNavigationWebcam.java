@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -44,7 +45,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -86,7 +89,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 @TeleOp(name="ULTIMATEGOAL Vuforia Nav Webcam", group ="Concept")
-@Disabled
+//@Disabled
 public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
@@ -106,7 +109,7 @@ public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " --- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "Ad/93Wv/////AAABmcg6QmLviUmMnbMCYrQjy3korvz10+kHAA1/XifbTNTCgiUL/mfrfkC6ag6F0Ii4pxn6CXTEOPupW6u3H/hFZpwbuHEWxmCxmsyhCg3vJRl9gQbVMehyVIO4GUAYIf3b7FeLNCj7QCLLYg4NBdYy76cf3jO1Hs7ioyOhAyPeFPag5hE1pD8WV41QN7SCJ+hDSq+uOjUfZLPUVNwz0L7YID7f5D3agcY0OEq10xaS/dtZN4mpeQg6ElehC2Yhofgj+nsQZtu9V/LRCgdEyKSxyJyvqYF2dKiXdINi0tOHQrJd9++p+nYHc2J5eieGt8vP9CLMg0PeZl/QOjw3h0BULvTO1D7VHlP/ff3kk6Mfe2Po";
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
@@ -120,6 +123,7 @@ public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
     // Class Members
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
+    public Map<String,Float> coordinates = new Hashtable<>();
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
@@ -132,11 +136,12 @@ public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
+
     @Override public void runOpMode() {
         /*
          * Retrieve the camera we are to use.
          */
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcamName = hardwareMap.get(WebcamName.class, "eyes");
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -296,7 +301,7 @@ public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-
+                xyzValues(translation.get(0), translation.get(1), translation.get(2));
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
@@ -309,5 +314,12 @@ public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
 
         // Disable Tracking when we are done;
         targetsUltimateGoal.deactivate();
+    }
+
+    public void xyzValues(float x, float y, float z) {
+        coordinates.put("x",x);
+        coordinates.put("y", y);
+        coordinates.put("z", z);
+
     }
 }

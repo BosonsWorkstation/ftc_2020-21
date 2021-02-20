@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Autonomous.AutoOmniDriveTrainV1;
 import org.firstinspires.ftc.teamcode.vision.EasyOpenCV;
+import org.firstinspires.ftc.teamcode.vision.Vuforia_Identifier;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -20,21 +21,34 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+
+
 @Autonomous(name = "Ring Detect!", group = "Linear Opmode")
 public class RingDetect extends EasyOpenCV
 {
 
     private AutoOmniDriveTrainV1 autoOmni;
-
+    private Vuforia_Identifier vuforiaDetect;
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
 
 
 
+
+
+
+
     @Override
     public void runOpMode()  {
+
         this.autoOmni = new AutoOmniDriveTrainV1(this.hardwareMap, this.telemetry);
        this.autoOmni.initialize(hardwareMap, telemetry);
+       this.vuforiaDetect = new Vuforia_Identifier();
+       this.vuforiaDetect.initVuforia();
+
+
+
+
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -56,6 +70,10 @@ public class RingDetect extends EasyOpenCV
             }
         });
 
+
+
+
+
         waitForStart();
 
         while (opModeIsActive())
@@ -68,7 +86,7 @@ public class RingDetect extends EasyOpenCV
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-                lineDetect(); 
+                lineDetect();
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
@@ -77,29 +95,36 @@ public class RingDetect extends EasyOpenCV
 
 
             this.autoOmni.colorDetect();
-
-
-            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
-            telemetry.addData("Blue ", this.autoOmni.colorRight.blue());
-            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
-            telemetry.addData("Left Red Val", this.autoOmni.colorLeft.red());
-            telemetry.addData("Right Red Val", this.autoOmni.colorRight.red());
-            telemetry.addData("Left Blue Val", this.autoOmni.colorLeft.blue());
-            telemetry.addData("Right Blue Val", this.autoOmni.colorRight.blue());
-            telemetry.addData("Left Green Val", this.autoOmni.colorLeft.green());
-            telemetry.addData("Right Green Val", this.autoOmni.colorRight.green());
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Position", pipeline.position);
+//            this.vuforiaDetect.vuforiaLine();
+//
+//            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
+//            telemetry.addData("Blue ", this.autoOmni.colorRight.blue());
+//            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
+//            telemetry.addData("Left Red Val", this.autoOmni.colorLeft.red());
+//            telemetry.addData("Right Red Val", this.autoOmni.colorRight.red());
+//            telemetry.addData("Left Blue Val", this.autoOmni.colorLeft.blue());
+//            telemetry.addData("Right Blue Val", this.autoOmni.colorRight.blue());
+//            telemetry.addData("Left Green Val", this.autoOmni.colorLeft.green());
+//            telemetry.addData("Right Green Val", this.autoOmni.colorRight.green());
+//            telemetry.addData("Analysis", pipeline.getAnalysis());
+//            telemetry.addData("Position", pipeline.position);
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
+//            sleep(50);
+
         }
-    }
+
+
+        }
+
+
+
+
     public void lineDetect(){
-//        this.autoOmni.crab(-1000, 0.4);
-//        sleep(100);
-//        this.autoOmni.move(4000, 0.4);
+        this.autoOmni.crab(-1000, 0.4);
+        sleep(100);
+        this.autoOmni.move(4000, 0.4);
 
         while(this.autoOmni.colorLeft.red() < 200 || this.autoOmni.colorRight.red() < 100){
             if(this.autoOmni.colorLeft.red() > 200 && this.autoOmni.colorRight.red() > 100){
@@ -126,6 +151,8 @@ public class RingDetect extends EasyOpenCV
 
 
     }
+
+
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
@@ -232,4 +259,8 @@ public class RingDetect extends EasyOpenCV
             return avg1;
         }
     }
+
+
+
+
 }
