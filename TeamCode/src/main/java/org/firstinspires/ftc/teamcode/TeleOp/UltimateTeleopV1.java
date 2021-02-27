@@ -145,6 +145,12 @@ public class UltimateTeleopV1 extends LinearOpMode {
             if(gamepad2.dpad_down){
                 this.driveTrain2.lightsOff();
             }
+//            boolean turning = gamepad1.right_bumper;
+            if(gamepad1.right_bumper){
+                this.driveTrain2.turnTime(100);
+//                turning = true;
+            }
+
         }
 
 
@@ -165,15 +171,21 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
                    if(gamepad2.y){
                        if(!buttonPressed) {
-                           driveTrain2.propeller.setPosition(0.1);
-                           sleep(780);
+                           driveTrain2.propeller.setPosition(0.01);
+                           sleep(770);
                            driveTrain2.propeller.setPosition(0.5);
-//                           sleep(600);
+                           sleep(100);
                        }
                        else{
                            sleep(20);
                        }
                        buttonPressed = true;
+                   }
+                   if(gamepad2.a){
+                       driveTrain2.propeller.setPosition(0.99);
+                       sleep(770);
+                       driveTrain2.propeller.setPosition(0.5);
+                       sleep(100);
                    }
                    else {
                        sleep(20);

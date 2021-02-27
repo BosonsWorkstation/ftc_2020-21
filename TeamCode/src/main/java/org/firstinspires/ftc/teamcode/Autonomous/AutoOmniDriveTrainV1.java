@@ -302,7 +302,7 @@ public class AutoOmniDriveTrainV1{
 
         try {
             propeller.setPosition(0.01);
-            Thread.sleep(775);
+            Thread.sleep(770);
             propeller.setPosition(0.5);
         }
         catch (InterruptedException e){

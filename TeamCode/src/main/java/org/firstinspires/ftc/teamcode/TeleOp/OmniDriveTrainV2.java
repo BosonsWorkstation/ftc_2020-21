@@ -167,6 +167,21 @@ public class OmniDriveTrainV2 {
 
     }
 
+    public void turnTime(int milliseconds) throws InterruptedException{
+        this.frontLeftWheel.setPower(0.6);
+        this.frontRightWheel.setPower(0.6);
+        this.backLeftWheel.setPower(0.6);
+        this.backRightWheel.setPower(-0.6);
+
+        Thread.sleep(milliseconds);
+
+        this.frontLeftWheel.setPower(0);
+        this.frontRightWheel.setPower(0);
+        this.backLeftWheel.setPower(0);
+        this.backRightWheel.setPower(0);
+        Thread.sleep(500);
+    }
+
     public double getHeading(){
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double heading = angles.firstAngle;
@@ -222,10 +237,10 @@ public class OmniDriveTrainV2 {
     }
 
     public void propel() throws InterruptedException {
-        propeller.setPosition(0.1);
-        Thread.sleep(790);
+        propeller.setPosition(0.01);
+        Thread.sleep(770);
         propeller.setPosition(0.5);
-        Thread.sleep(600);
+        Thread.sleep(100);
     }
 
     public void knockIntake(){

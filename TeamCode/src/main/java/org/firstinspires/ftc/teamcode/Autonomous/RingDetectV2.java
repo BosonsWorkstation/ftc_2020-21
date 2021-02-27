@@ -143,6 +143,7 @@ public class RingDetectV2 extends EasyOpenCV
                     this.autoOmni.move(2200, 0.4);
                     sleep(SLEEP_TIME);
                     this.autoOmni.crab(-700, 0.4);
+                    this.autoOmni.autoTowerHand();
                     this.autoOmni.move(-2000, 0.6);
                     break;
                 default:
