@@ -35,7 +35,7 @@ public class RingDetectV2 extends EasyOpenCV
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
     ConceptVuforiaUltimateGoalNavigationWebcam pictureDetect;
 
-
+    private static final int SLEEP_TIME = 20;
 
 
 
@@ -50,6 +50,8 @@ public class RingDetectV2 extends EasyOpenCV
         this.vuforiaDetect.initVuforia();
         this.pictureDetect = new ConceptVuforiaUltimateGoalNavigationWebcam();
 
+
+                telemetry.setAutoClear(false);
 
 
 
@@ -79,60 +81,105 @@ public class RingDetectV2 extends EasyOpenCV
 
 
         waitForStart();
-        SkystoneDeterminationPipeline.RingPosition ringPosition;
-        while (opModeIsActive())
+        SkystoneDeterminationPipeline.RingPosition ringPosition = null;
+        if (opModeIsActive())
         {
+            sleep(1000);
 
-//            sleep(1000);
-//            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
-//                ringPosition = SkystoneDeterminationPipeline.RingPosition.FOUR;
-//            }
-//
-//            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-//                ringPosition = SkystoneDeterminationPipeline.RingPosition.ONE;
-//            }
-//
-//            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
-//                ringPosition = SkystoneDeterminationPipeline.RingPosition.NONE;
-//            }
+            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
+                ringPosition = SkystoneDeterminationPipeline.RingPosition.FOUR;
+            }
 
-//            moveToLine();
-//            lineDetect();
+            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
+                ringPosition = SkystoneDeterminationPipeline.RingPosition.ONE;
+            }
 
+            if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
+                ringPosition = SkystoneDeterminationPipeline.RingPosition.NONE;
+            }
 
+            moveToLine();
 
-
-            this.autoOmni.colorDetect();
-//            this.vuforiaDetect.vuforiaLine();
-//
-            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
-            telemetry.addData("Blue ", this.autoOmni.colorRight.blue());
-            telemetry.addData("Hue", this.autoOmni.hsvValues[0]);
-            telemetry.addData("Left Red Val", this.autoOmni.colorLeft.red());
-            telemetry.addData("Right Red Val", this.autoOmni.colorRight.red());
-            telemetry.addData("Left Blue Val", this.autoOmni.colorLeft.blue());
-            telemetry.addData("Right Blue Val", this.autoOmni.colorRight.blue());
-            telemetry.addData("Left Green Val", this.autoOmni.colorLeft.green());
-            telemetry.addData("Right Green Val", this.autoOmni.colorRight.green());
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Position X", this.pictureDetect.coordinates.get("x"));
-            telemetry.addData("Position Y", this.pictureDetect.coordinates.get('y'));
-            telemetry.addData("Position Z", this.pictureDetect.coordinates.get('z'));
-
-            telemetry.update();
-
-            // Don't burn CPU cycles busy-looping in this sample
+//            this.autoOmni.movePower(0.2);
+//            sleep(3000);
+//            this.autoOmni.stopNow();
 //            sleep(50);
-//            break;
-        }
+            this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+            lineDetect();
+            sleep(SLEEP_TIME);
+            this.autoOmni.move(-550, 0.3);
 
+            this.autoOmni.propel();
+            sleep(100);
+            this.autoOmni.propel();
+            sleep(100);
+            this.autoOmni.propel();
+            sleep(100);
+            this.autoOmni.propel();
+//            this.autoOmni.tripleShoot();
+            this.autoOmni.launchStop();
+            this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+            lineDetect();
+
+            switch (ringPosition){
+                case NONE:
+                    telemetry.addData(String.valueOf(ringPosition), "ZERO Rings Detected");
+                    this.autoOmni.move(400, 0.4);
+                    sleep(SLEEP_TIME);
+                    this.autoOmni.crab(-700, 0.4);
+                    this.autoOmni.autoTowerHand();
+
+                    break;
+                case ONE:
+                    telemetry.addData(String.valueOf(ringPosition), "ONE Ring Detected");
+                    this.autoOmni.crab(550,0.4);
+                    sleep(SLEEP_TIME);
+                    this.autoOmni.move(1400, 0.4);
+                    this.autoOmni.autoTowerHand();
+                    this.autoOmni.move(-1200, 0.6);
+                    break;
+                case FOUR:
+                    telemetry.addData(String.valueOf(ringPosition), "FOUR Rings Detected");
+                    this.autoOmni.move(2200, 0.4);
+                    sleep(SLEEP_TIME);
+                    this.autoOmni.crab(-700, 0.4);
+                    this.autoOmni.move(-2000, 0.6);
+                    break;
+                default:
+                    telemetry.addData(String.valueOf(ringPosition), "NO Rings Detected");
+
+            }
+
+
+
+
+            this.autoOmni.stopNow();
+
+
+
+
+
+//            this.vuforiaDetect.vuforiaLine();
+
+        }
+        while(opModeIsActive()){
+            sleep(100);
+        }
 
     }
 
     private void moveToLine(){
+        this.autoOmni.move(100, 0.3);
+        sleep(SLEEP_TIME);
         this.autoOmni.crab(-450, 0.4);
-        sleep(100);
-        this.autoOmni.move(2700, 0.4);
+
+        this.autoOmni.launch();
+
+        sleep(SLEEP_TIME);
+        this.autoOmni.move(2600, 0.4);
+        sleep(SLEEP_TIME);
+        this.autoOmni.crab(600, 0.4);
+        this.autoOmni.stopNow();
     }
 
     private boolean isLeftWhite(){
@@ -146,22 +193,31 @@ public class RingDetectV2 extends EasyOpenCV
     }
 
     public void lineDetect(){
-
+        boolean leftDone = false;
+        boolean rightDone = false;
         this.autoOmni.movePower(0.2);
-        while(!(this.isLeftWhite() && this.isRightWhite())){
-//            if(this.autoOmni.colorLeft.red() > 200 && this.autoOmni.colorRight.red() > 100){
-//                sleep(100);
-//            }
-            if(this.isLeftWhite() ){
-                this.autoOmni.rightCorrect(0.2);
+//        telemetry.setAutoClear(false);
+//        telemetry.addData("Detecting Line", leftDone);
+//        telemetry.update();
+        while(!(leftDone && rightDone) && opModeIsActive()){
+//            telemetry.addData("In While Loop", leftDone);
+//            telemetry.addData("In While Loop", rightDone);
+//            telemetry.update();
+
+            if(this.isLeftWhite() && !leftDone ){
+                this.autoOmni.rightCorrect(0.1);
+                leftDone = true;
+//                telemetry.addData("Left Done?", leftDone);
+//                telemetry.update();
             }
-            if (this.isRightWhite())
+            if (this.isRightWhite() && !rightDone)
             {
-                this.autoOmni.leftCorrect(0.2);
+                this.autoOmni.leftCorrect(0.1);
+                rightDone = true;
+//                telemetry.addData("Right Done?", rightDone);
+//                telemetry.update();
             }
-//            if(this.autoOmni.colorLeft.red() > 200 && this.autoOmni.colorRight.red() > 100){
-//                break;
-//            }
+
         }
 
         this.autoOmni.stopNow();

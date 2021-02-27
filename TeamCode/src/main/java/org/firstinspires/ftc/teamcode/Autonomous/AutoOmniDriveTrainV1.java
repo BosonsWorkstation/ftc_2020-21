@@ -64,7 +64,7 @@ public class AutoOmniDriveTrainV1{
     }
 
 
-    private void initDriveMotors(HardwareMap hardwareMap, Telemetry telemetry){
+    public void initDriveMotors(HardwareMap hardwareMap, Telemetry telemetry){
         this.backLeftWheel = hardwareMap.dcMotor.get("Back_Left_Wheel");
         this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
         this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
@@ -116,7 +116,7 @@ public class AutoOmniDriveTrainV1{
 
         }
 
-    private void initMotor(DcMotor motor) {
+    public void initMotor(DcMotor motor) {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -132,6 +132,7 @@ public class AutoOmniDriveTrainV1{
     }
 
     public void rightCorrect(double power){
+
         frontLeftWheel.setPower(0);
         frontRightWheel.setPower(power);
         backLeftWheel.setPower(0);
@@ -146,17 +147,19 @@ public class AutoOmniDriveTrainV1{
     }
 
     public void  movePower (double power)  {
+
         frontLeftWheel.setPower(-power);
         frontRightWheel.setPower(power);
         backLeftWheel.setPower(-power);
         backRightWheel.setPower(power);
     }
+
     public void towerHandUp(){
-        towerHand.setPower(-0.8);
+        towerHand.setPower(0.8);
     }
 
     public void towerHandDown(){
-        towerHand.setPower(0.8);
+        towerHand.setPower(-0.8);
     }
 
     public void towerHandStop(){
@@ -298,8 +301,8 @@ public class AutoOmniDriveTrainV1{
 
 
         try {
-            propeller.setPosition(0.1);
-            Thread.sleep(790);
+            propeller.setPosition(0.01);
+            Thread.sleep(775);
             propeller.setPosition(0.5);
         }
         catch (InterruptedException e){
@@ -317,6 +320,35 @@ public class AutoOmniDriveTrainV1{
                 (int) (colorRight.blue() * 255.00),
                 hsvValues);
     }
+
+    public void tripleShoot(){
+        try {
+            propeller.setPosition(0.1);
+            Thread.sleep(3120);
+            propeller.setPosition(0.5);
+
+        }
+        catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+        }
+
+
+    }
+
+    public void autoTowerHand(){
+        try {
+            this.towerHandUp();
+            Thread.sleep(1000);
+            this.towerHandStop();
+
+        }
+        catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+        }
+
+    }
+
+
 
     public void lightsGreen(){
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);

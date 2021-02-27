@@ -129,11 +129,11 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
 
-            if(gamepad2.dpad_left){
-                this.driveTrain2.towerHandUp();
-            }
-            else if(gamepad2.dpad_right){
+            if(gamepad2.dpad_right){
                 this.driveTrain2.towerHandDown();
+            }
+            else if(gamepad2.dpad_left){
+                this.driveTrain2.towerHandUp();
             }
             else{
                 this.driveTrain2.towerHandStop();
@@ -166,9 +166,9 @@ public class UltimateTeleopV1 extends LinearOpMode {
                    if(gamepad2.y){
                        if(!buttonPressed) {
                            driveTrain2.propeller.setPosition(0.1);
-                           sleep(790);
+                           sleep(780);
                            driveTrain2.propeller.setPosition(0.5);
-                           sleep(600);
+//                           sleep(600);
                        }
                        else{
                            sleep(20);

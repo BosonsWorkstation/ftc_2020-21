@@ -183,7 +183,7 @@ public class OmniDriveTrainV2 {
 
 
     public void outtake(){
-        intake.setPower(-0.8);
+        intake.setPower(0.8);
     }
 
     public void intakeStop(){
@@ -191,7 +191,7 @@ public class OmniDriveTrainV2 {
     }
 
     public void intake(){
-        intake.setPower(0.8);
+        intake.setPower(-0.8);
     }
 
     public void intakePower(double power){
