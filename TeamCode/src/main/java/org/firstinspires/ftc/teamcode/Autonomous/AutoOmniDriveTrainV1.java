@@ -167,7 +167,7 @@ public class AutoOmniDriveTrainV1{
     }
 
 
-    public void rotate(int distance, double power) throws InterruptedException{
+    public void rotate(int distance, double power) {
         int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
         int frontRightPosition = frontRightWheel.getCurrentPosition();
         int backLeftPosition = backLeftWheel.getCurrentPosition();
@@ -288,6 +288,8 @@ public class AutoOmniDriveTrainV1{
 
 
     public void launch() {
+//        this.launcherL.setPower(0.53);
+//        this.launcherR.setPower(0.53);
         this.launcherL.setPower(0.53);
         this.launcherR.setPower(0.53);
     }
@@ -338,7 +340,7 @@ public class AutoOmniDriveTrainV1{
     public void autoTowerHand(){
         try {
             this.towerHandUp();
-            Thread.sleep(1000);
+            Thread.sleep(2500);
             this.towerHandStop();
 
         }

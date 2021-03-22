@@ -223,6 +223,8 @@ public class OmniDriveTrainV2 {
     public void launch(){
        launcherL.setPower(0.53);
        launcherR.setPower(0.53);
+//        launcherL.setPower(0.3);
+//        launcherR.setPower(0.3);
     }
 
     public void launchStop(){
@@ -232,8 +234,10 @@ public class OmniDriveTrainV2 {
     }
 
     public void powerLaunch(){
-        launcherL.setPower(0.4);
-        launcherR.setPower(0.4);
+//        launcherL.setPower(0.4);
+//        launcherR.setPower(0.4);
+        launcherL.setPower(0.37);
+        launcherR.setPower(0.37);
     }
 
     public void propel() throws InterruptedException {
@@ -252,11 +256,11 @@ public class OmniDriveTrainV2 {
     }
 
     public void towerHandUp(){
-        towerHand.setPower(0.1);
+        towerHand.setPower(0.2);
     }
 
     public void towerHandDown(){
-        towerHand.setPower(-0.1);
+        towerHand.setPower(-0.2);
     }
 
     public void towerHandStop(){
@@ -300,7 +304,10 @@ public class OmniDriveTrainV2 {
 //        }
 
 
-        telemetry.addData("tower grabber", towerGrasp.getPosition());
+//        telemetry.addData("tower grabber", towerGrasp.getPosition());
+
+
+
 //        telemetry.addData("Stick_X", stick_x);
 //        telemetry.addData("Stick_Y", stick_y);
 //        telemetry.addData("Magnitude",  Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));
@@ -313,7 +320,7 @@ public class OmniDriveTrainV2 {
             telemetry.addData("GO!!!!!!!", launcherL.getPower());
         }
         else{
-            telemetry.addData("wait", launcherL.getPower());
+//            telemetry.addData("wait", launcherL.getPower());
         }
 
         frontLeftWheel.setPower(Py - Protate);

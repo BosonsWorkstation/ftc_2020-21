@@ -5,6 +5,7 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaUltimateGoalNavigation;
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaUltimateGoalNavigationWebcam;
@@ -34,8 +35,9 @@ public class RingDetectV2 extends EasyOpenCV
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
     ConceptVuforiaUltimateGoalNavigationWebcam pictureDetect;
+    public ColorSensor propellorColor;
 
-    private static final int SLEEP_TIME = 20;
+    private static final int SLEEP_TIME = 35;
 
 
 
@@ -49,6 +51,7 @@ public class RingDetectV2 extends EasyOpenCV
         this.vuforiaDetect = new Vuforia_Identifier();
         this.vuforiaDetect.initVuforia();
         this.pictureDetect = new ConceptVuforiaUltimateGoalNavigationWebcam();
+        this.propellorColor = hardwareMap.get(ColorSensor.class, "propellor_color");
 
 
                 telemetry.setAutoClear(false);
@@ -79,23 +82,28 @@ public class RingDetectV2 extends EasyOpenCV
 
 
 
-
         waitForStart();
+
         SkystoneDeterminationPipeline.RingPosition ringPosition = null;
         if (opModeIsActive())
         {
             sleep(1000);
-
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
                 ringPosition = SkystoneDeterminationPipeline.RingPosition.FOUR;
+                telemetry.addData("4 Rings Detected!", ringPosition);
+                telemetry.update();
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
                 ringPosition = SkystoneDeterminationPipeline.RingPosition.ONE;
+                telemetry.addData("1 Ring Detected!", ringPosition);
+                telemetry.update();
             }
 
             if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
                 ringPosition = SkystoneDeterminationPipeline.RingPosition.NONE;
+                telemetry.addData("0 Rings Detected!", ringPosition);
+                telemetry.update();
             }
 
             moveToLine();
@@ -105,18 +113,29 @@ public class RingDetectV2 extends EasyOpenCV
 //            this.autoOmni.stopNow();
 //            sleep(50);
             this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+
             lineDetect();
             sleep(SLEEP_TIME);
-            this.autoOmni.move(-550, 0.3);
 
-            this.autoOmni.propel();
-            sleep(100);
-            this.autoOmni.propel();
-            sleep(100);
-            this.autoOmni.propel();
-            sleep(100);
-            this.autoOmni.propel();
-//            this.autoOmni.tripleShoot();
+
+
+
+            //Backup to get to launch position
+//            this.autoOmni.move(-550, 0.3);
+//            this.autoOmni.move(-750, 0.3);
+            this.autoOmni.move(-250, 0.3);
+
+            sleep(SLEEP_TIME);
+
+
+            this.propel();
+//            sleep(1000);
+            this.propel();
+//            sleep(1000);
+            this.propel();
+//            sleep(1000);
+            this.propel();
+
             this.autoOmni.launchStop();
             this.autoOmni.initDriveMotors(hardwareMap, telemetry);
             lineDetect();
@@ -124,26 +143,37 @@ public class RingDetectV2 extends EasyOpenCV
             switch (ringPosition){
                 case NONE:
                     telemetry.addData(String.valueOf(ringPosition), "ZERO Rings Detected");
-                    this.autoOmni.move(400, 0.4);
+                    this.autoOmni.move(300, 0.4);
                     sleep(SLEEP_TIME);
-                    this.autoOmni.crab(-700, 0.4);
+//                    this.autoOmni.crab(-300, 0.4);
+                    this.autoOmni.crab(-400, 0.4);
                     this.autoOmni.autoTowerHand();
+                    sleep(200);
+                    this.autoOmni.crab(200, 0.4);
 
                     break;
                 case ONE:
                     telemetry.addData(String.valueOf(ringPosition), "ONE Ring Detected");
-                    this.autoOmni.crab(550,0.4);
+//                    this.autoOmni.crab(750,0.4);
+                    this.autoOmni.crab(700,0.4);
                     sleep(SLEEP_TIME);
                     this.autoOmni.move(1400, 0.4);
                     this.autoOmni.autoTowerHand();
-                    this.autoOmni.move(-1200, 0.6);
+                    sleep(200);
+                    this.autoOmni.crab(200, 0.4);
+                    this.autoOmni.move(-900, 0.6);
+//                    this.autoOmni.move(-1000, 0.6);
                     break;
                 case FOUR:
                     telemetry.addData(String.valueOf(ringPosition), "FOUR Rings Detected");
-                    this.autoOmni.move(2200, 0.4);
+//                    this.autoOmni.move(2200, 0.4);
+                    this.autoOmni.move(2250, 0.4);
                     sleep(SLEEP_TIME);
-                    this.autoOmni.crab(-700, 0.4);
+//                    this.autoOmni.crab(-500, 0.4);
+                    this.autoOmni.crab(-475, 0.4);
                     this.autoOmni.autoTowerHand();
+                    sleep(200);
+                    this.autoOmni.crab(200, 0.4);
                     this.autoOmni.move(-2000, 0.6);
                     break;
                 default:
@@ -170,16 +200,20 @@ public class RingDetectV2 extends EasyOpenCV
     }
 
     private void moveToLine(){
+        //Leave Base
         this.autoOmni.move(100, 0.3);
         sleep(SLEEP_TIME);
+        //Crab to avoid rings
         this.autoOmni.crab(-450, 0.4);
-
+        sleep(SLEEP_TIME);
+        //Start Launcher Motors
         this.autoOmni.launch();
-
+        //Move close enough to the white line
+        this.autoOmni.move(2700, 0.4);
         sleep(SLEEP_TIME);
-        this.autoOmni.move(2600, 0.4);
-        sleep(SLEEP_TIME);
-        this.autoOmni.crab(600, 0.4);
+        //Crab to line for shooting rings
+//        this.autoOmni.crab(600, 0.4);
+        this.autoOmni.crab(650, 0.4);
         this.autoOmni.stopNow();
     }
 
@@ -193,10 +227,10 @@ public class RingDetectV2 extends EasyOpenCV
                 && this.autoOmni.colorRight.blue() > 300;
     }
 
-    public void lineDetect(){
+    public void lineDetect() {
         boolean leftDone = false;
         boolean rightDone = false;
-        this.autoOmni.movePower(0.2);
+        this.autoOmni.movePower(0.1);
 //        telemetry.setAutoClear(false);
 //        telemetry.addData("Detecting Line", leftDone);
 //        telemetry.update();
@@ -223,11 +257,24 @@ public class RingDetectV2 extends EasyOpenCV
 
         this.autoOmni.stopNow();
 
+//        this.autoOmni.rotate(50, 0.2);
+//
+//        this.autoOmni.stopNow();
 
 
     }
 
-
+    private boolean isColor(){
+        return this.propellorColor.blue() > 100 || this.propellorColor.green() > 100 || this.propellorColor.red() > 100;
+    }
+    private void propel(){
+        autoOmni.propeller.setPosition(0.01);
+        sleep(100);
+        while (!isColor()) {
+            sleep(5);
+        }
+        autoOmni.propeller.setPosition(0.5);
+    }
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
