@@ -147,10 +147,16 @@ public class AutoOmniDriveTrainV1{
     }
 
     public void  movePower (double power)  {
-
         frontLeftWheel.setPower(-power);
         frontRightWheel.setPower(power);
         backLeftWheel.setPower(-power);
+        backRightWheel.setPower(power);
+    }
+
+    public void crabPower (double power){
+        frontLeftWheel.setPower(-power);
+        frontRightWheel.setPower(-power);
+        backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
     }
 
@@ -285,7 +291,10 @@ public class AutoOmniDriveTrainV1{
         stopNow();
     }
 
-
+    public void powerLaunch(){
+        this.launcherL.setPower(0.35);
+        this.launcherR.setPower(0.35);
+    }
 
     public void launch() {
 //        this.launcherL.setPower(0.53);

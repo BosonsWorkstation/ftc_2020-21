@@ -71,11 +71,11 @@ public class OmniDriveTrainV2 {
         this.initializeGyro(hardwareMap, telemetry);
         this.initializeMotors(hardwareMap, telemetry);
         this.correction_factor = direction.getCorrection();
-        this.leftFrontTelemetry = telemetry.addData("LF Power", frontLeftWheel.getPower());
-        this.rightFrontTelemetry = telemetry.addData("RF Power", frontRightWheel.getPower());
-        this.leftBackTelemetry = telemetry.addData("LF Power", backLeftWheel.getPower());
-        this.rightBackTelemetry = telemetry.addData("RB Power", backRightWheel.getPower());
-        this.usePowerTelemetry = telemetry.addData("usePower", 0);
+//        this.leftFrontTelemetry = telemetry.addData("LF Power", frontLeftWheel.getPower());
+//        this.rightFrontTelemetry = telemetry.addData("RF Power", frontRightWheel.getPower());
+//        this.leftBackTelemetry = telemetry.addData("LF Power", backLeftWheel.getPower());
+//        this.rightBackTelemetry = telemetry.addData("RB Power", backRightWheel.getPower());
+//        this.usePowerTelemetry = telemetry.addData("usePower", 0);
 //        this.colorLeftTelemetry = telemetry.addData("Left Color Val", leftColor.argb());
 //        this.colorRightTelemetry = telemetry.addData("Right Color Val", rightColor.argb());
     }
@@ -95,7 +95,7 @@ public class OmniDriveTrainV2 {
         this.propeller = hardwareMap.servo.get("Propeller");
         this.intakeServo = hardwareMap.servo.get("Intake_Servo");
         this.towerGrasp = hardwareMap.servo.get("Tower_Grasp");
-        this.rightColor = hardwareMap.get(ColorSensor.class, "Color_Left");
+        this.leftColor = hardwareMap.get(ColorSensor.class, "Color_Left");
         this.rightColor = hardwareMap.get(ColorSensor.class, "Color_Right");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);

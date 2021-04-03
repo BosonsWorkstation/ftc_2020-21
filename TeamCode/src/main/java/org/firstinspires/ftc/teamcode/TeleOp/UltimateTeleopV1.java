@@ -93,14 +93,6 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 this.driveTrain2.resetAngle();
             }
 
-//            if(gamepad2.b){
-//                this.driveTrain2.knockIntake();
-//            }
-//
-//            if(gamepad2.x){
-//                this.driveTrain2.unknockIntake();
-//            }
-
             if (gamepad1.right_trigger > 0.3){
                 this.driveTrain2.intake();
             }
@@ -164,19 +156,33 @@ public class UltimateTeleopV1 extends LinearOpMode {
 //                turning = true;
             }
 
-            this.isColor();
+            if(gamepad1.dpad_up){
+//                telemetry.setAutoClear(false);
+                telemetry.addData("Fake Left Blue", this.driveTrain2.rightColor.blue());
+                telemetry.addData("Fake Left Red", this.driveTrain2.rightColor.red());
+                telemetry.addData("Fake Left Green", this.driveTrain2.rightColor.green());
+                telemetry.addData("Fake Left Alpha", this.driveTrain2.rightColor.alpha());
+                telemetry.addData("Fake Left argb", this.driveTrain2.rightColor.argb());
+                telemetry.update();
+            }
 
+            this.isColor();
+//            Thread.sleep(50);
         }
 
 
 
 
-        telemetry.addData("Intake Power", this.driveTrain2.intake.getPower());
-        telemetry.update();
-        Thread.sleep(50);
+
+
+//        telemetry.addData("Intake Power", this.driveTrain2.intake.getPower());
+//        telemetry.update();
+
 
 
     }
+
+
 //    private boolean isColor(){
 //        telemetry.addData("blue", propellorColor.blue());
 //        telemetry.addData("green", propellorColor.green());
