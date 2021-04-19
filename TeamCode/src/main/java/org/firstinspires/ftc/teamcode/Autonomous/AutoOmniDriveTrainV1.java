@@ -23,7 +23,9 @@ public class AutoOmniDriveTrainV1{
     protected DcMotor launcherR;
     protected Servo propeller;
     protected Servo intakeServo;
+    protected Servo towerServo;
     protected DcMotor towerHand;
+    protected Servo towerGrasp;
     protected  RevBlinkinLedDriver lights;
     protected ColorSensor colorLeft;
     protected ColorSensor colorRight;
@@ -49,7 +51,7 @@ public class AutoOmniDriveTrainV1{
     private static final int TICKS_PER_REVOLUTION = 280;
     private static final double DISTANCE_PER_REVOLUTION = 4 * Math.PI;
     private static final double CRAB_POWER = .2;
-    private static final double correctionPower = 0.24;
+    private static final double correctionPower = 0.08;
 //    Telemetry.Item currentPositionTel;
 //    Telemetry.Item targetValueTel;
 
@@ -69,6 +71,10 @@ public class AutoOmniDriveTrainV1{
         this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
         this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
         this.frontRightWheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
+        this.initDriveMotors();
+    }
+
+    private void initDriveMotors(){
         this.initMotor(frontLeftWheel);
 
         this.initMotor(frontRightWheel);
@@ -93,6 +99,9 @@ public class AutoOmniDriveTrainV1{
 
     private void initTowerHand(HardwareMap hardwareMap, Telemetry telemetry){
         this.towerHand = hardwareMap.dcMotor.get("Tower_Hand");
+        this.towerGrasp = hardwareMap.servo.get("Tower_Grasp");
+        this.towerGrasp.setPosition(0.5);
+        this.towerServo = hardwareMap.servo.get("Tower_Servo");
     }
 
     private void initLights(HardwareMap hardwareMap, Telemetry telemetry){
@@ -119,8 +128,8 @@ public class AutoOmniDriveTrainV1{
     public void initMotor(DcMotor motor) {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+//        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     public int getTargetValue(int distance){
@@ -129,6 +138,13 @@ public class AutoOmniDriveTrainV1{
 //        targetValueTel.setValue("%d", targetValue);
 //        telemetry.update();
         return targetValue;
+    }
+
+    public void towerServoUp(){
+        towerServo.setPosition(0.5);
+    }
+    public void towerServoDown(){
+        towerServo.setPosition(0);
     }
 
     public void rightCorrect(double power){
@@ -142,13 +158,14 @@ public class AutoOmniDriveTrainV1{
     public void leftCorrect(double power){
         frontLeftWheel.setPower(-power);
         frontRightWheel.setPower(0);
-        backLeftWheel.setPower(-power);
+        backLeftWheel.setPower(-power - correctionPower);
         backRightWheel.setPower(0);
     }
 
     public void  movePower (double power)  {
         frontLeftWheel.setPower(-power);
         frontRightWheel.setPower(power);
+//        backLeftWheel.setPower(-power - correctionPower);
         backLeftWheel.setPower(-power);
         backRightWheel.setPower(power);
     }
@@ -156,12 +173,12 @@ public class AutoOmniDriveTrainV1{
     public void crabPower (double power){
         frontLeftWheel.setPower(-power);
         frontRightWheel.setPower(-power);
-        backLeftWheel.setPower(power);
+        backLeftWheel.setPower(power + correctionPower);
         backRightWheel.setPower(power);
     }
 
     public void towerHandUp(){
-        towerHand.setPower(0.8);
+        towerHand.setPower(1);
     }
 
     public void towerHandDown(){
@@ -192,7 +209,7 @@ public class AutoOmniDriveTrainV1{
         frontLeftWheel.setPower(power);
 //        frontRightWheel.setPower(power - correctionPower);
         frontRightWheel.setPower(power);
-        backLeftWheel.setPower(power);
+        backLeftWheel.setPower(power + correctionPower);
         backRightWheel.setPower(power);
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
@@ -232,7 +249,7 @@ public class AutoOmniDriveTrainV1{
         frontLeftWheel.setPower(power);
 //        frontRightWheel.setPower(power - correctionPower);
         frontRightWheel.setPower(power);
-        backLeftWheel.setPower(power);
+        backLeftWheel.setPower(power + correctionPower);
         backRightWheel.setPower(power);
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
@@ -269,6 +286,8 @@ public class AutoOmniDriveTrainV1{
         backLeftWheel.setTargetPosition(backLeftPosition - distance);
         backRightWheel.setTargetPosition(backRightPosition + distance);
 
+//        boolean direction = backLeftPosition - backLeftWheel.getTargetPosition() > 0;
+
         frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -277,8 +296,15 @@ public class AutoOmniDriveTrainV1{
         frontLeftWheel.setPower(power);
 //        frontRightWheel.setPower(power - correctionPower);
         frontRightWheel.setPower(power);
-        backLeftWheel.setPower(power);
+//        backLeftWheel.setPower(power + correctionPower);
         backRightWheel.setPower(power);
+
+        if(distance > 0){
+            backLeftWheel.setPower(power + correctionPower);
+        }
+        else{
+            backLeftWheel.setPower(power - correctionPower);
+        }
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
 //            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
@@ -291,9 +317,18 @@ public class AutoOmniDriveTrainV1{
         stopNow();
     }
 
+    public void towerOpen(){
+        this.towerGrasp.setPosition(0.5);
+    }
+    public void towerClose(){
+        this.towerGrasp.setPosition(1);
+    }
+
     public void powerLaunch(){
-        this.launcherL.setPower(0.35);
-        this.launcherR.setPower(0.35);
+//        this.launcherR.setPower(0.35);
+//        this.launcherL.setPower(0.35);
+        this.launcherR.setPower(0.37);
+        this.launcherL.setPower(0.37);
     }
 
     public void launch() {
@@ -347,9 +382,13 @@ public class AutoOmniDriveTrainV1{
     }
 
     public void autoTowerHand(){
+        this.autoTowerHand(2000);
+    }
+
+    public void autoTowerHand(long time){
         try {
             this.towerHandUp();
-            Thread.sleep(2500);
+            Thread.sleep(time);
             this.towerHandStop();
 
         }
@@ -357,6 +396,72 @@ public class AutoOmniDriveTrainV1{
             Thread.currentThread().interrupt();
         }
 
+    }
+
+    public void diagonal(HeadingEnum direction, int distance, double power){
+        this.initDriveMotors();
+        //1 = forward + left; 2 = forward + right; 3 = backward + left; 4 = backward + right
+        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
+        int frontRightPosition = frontRightWheel.getCurrentPosition();
+        int backLeftPosition = backLeftWheel.getCurrentPosition();
+        int backRightPosition = backRightWheel.getCurrentPosition();
+
+        switch(direction){
+            case SOUTH_EAST:
+                frontRightWheel.setTargetPosition(frontRightPosition - distance);
+                backLeftWheel.setTargetPosition(backLeftPosition + distance);
+
+                frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                frontRightWheel.setPower(power);
+                backLeftWheel.setPower(power + correctionPower);
+
+                break;
+            case SOUTH_WEST:
+                frontLeftWheel.setTargetPosition(frontLeftPosition + distance);
+                backRightWheel.setTargetPosition(backRightPosition - distance);
+
+                frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                frontLeftWheel.setPower(power);
+                backRightWheel.setPower(power);
+
+                break;
+            case NORTH_EAST:
+                frontLeftWheel.setTargetPosition(frontLeftPosition - distance);
+                backRightWheel.setTargetPosition(backRightPosition + distance);
+
+                frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                frontLeftWheel.setPower(power);
+                backRightWheel.setPower(power);
+
+                break;
+            case NORTH_WEST:
+                frontRightWheel.setTargetPosition(frontRightPosition + distance);
+                backLeftWheel.setTargetPosition(backLeftPosition - distance);
+
+                frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                frontRightWheel.setPower(power);
+                backLeftWheel.setPower(power + correctionPower);
+
+                break;
+        }
+
+        while(frontLeftWheel.isBusy() || frontRightWheel.isBusy() || backLeftWheel.isBusy() || backRightWheel.isBusy()){
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        stopNow();
     }
 
 

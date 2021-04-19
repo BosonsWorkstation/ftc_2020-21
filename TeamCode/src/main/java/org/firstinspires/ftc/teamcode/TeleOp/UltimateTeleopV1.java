@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
+import org.firstinspires.ftc.teamcode.Autonomous.AutoOmniDriveTrainV1;
 
 
 import android.graphics.drawable.GradientDrawable;
@@ -85,6 +85,14 @@ public class UltimateTeleopV1 extends LinearOpMode {
                 this.driveTrain2.towerOpen();
             }
 
+            //TESTINGGGG
+            if(gamepad2.left_stick_button){
+                this.driveTrain2.towerServoUp();
+            }
+            if (gamepad2.right_stick_button){
+                this.driveTrain2.towerServoDown();
+            }
+
             if(gamepad2.right_bumper){
                 this.driveTrain2.towerClose();
             }
@@ -150,20 +158,50 @@ public class UltimateTeleopV1 extends LinearOpMode {
             if(gamepad2.dpad_down){
                 this.driveTrain2.lightsOff();
             }
-//            boolean turning = gamepad1.right_bumper;
-            if(gamepad1.right_bumper){
-                this.driveTrain2.turnTime(100);
-//                turning = true;
-            }
+
 
             if(gamepad1.dpad_up){
-//                telemetry.setAutoClear(false);
-                telemetry.addData("Fake Left Blue", this.driveTrain2.rightColor.blue());
-                telemetry.addData("Fake Left Red", this.driveTrain2.rightColor.red());
-                telemetry.addData("Fake Left Green", this.driveTrain2.rightColor.green());
-                telemetry.addData("Fake Left Alpha", this.driveTrain2.rightColor.alpha());
-                telemetry.addData("Fake Left argb", this.driveTrain2.rightColor.argb());
-                telemetry.update();
+////                telemetry.setAutoClear(false);
+//                telemetry.addData("Fake Right Blue", this.driveTrain2.colorLeft.blue());
+//                telemetry.addData("Fake Right Red", this.driveTrain2.colorLeft.red());
+//                telemetry.addData("Fake Right Green", this.driveTrain2.colorLeft.green());
+//                telemetry.addData("Fake Right Alpha", this.driveTrain2.colorLeft.alpha());
+//                telemetry.addData("Fake Right argb", this.driveTrain2.colorLeft.argb());
+//                telemetry.update();
+            }
+
+            if(gamepad1.left_bumper){
+//                launch();
+//
+//
+//                crabToBlue();
+//
+//                this.autoOmni.crab(200, 0.2);
+//
+//                this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+//                lineDetect(true);
+//                sleep(SLEEP_TIME);
+//
+//
+//                this.autoOmni.move(-150, 0.2);
+//                sleep(SLEEP_TIME);
+
+                this.driveTrain2.launch();
+
+                this.driveTrain2.initMotors();
+                this.driveTrain2.crabToBlue(false);
+
+                this.driveTrain2.autoCrab(200, 0.2);
+
+                this.driveTrain2.initMotors();
+                this.driveTrain2.lineDetect(true);
+                sleep(10);
+
+                this.driveTrain2.move(-150, 0.2);
+            }
+
+            if(gamepad1.right_bumper){
+                this.driveTrain2.autoShoot();
             }
 
             this.isColor();

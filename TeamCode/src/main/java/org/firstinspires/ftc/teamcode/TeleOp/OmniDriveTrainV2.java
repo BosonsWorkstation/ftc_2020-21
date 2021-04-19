@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -32,10 +33,11 @@ public class OmniDriveTrainV2 {
     protected DcMotor launcherR;
     protected Servo propeller;
     protected Servo intakeServo;
+    protected Servo towerServo;
     protected  RevBlinkinLedDriver lights;
-    protected ColorSensor leftColor;
-    protected ColorSensor rightColor;
-
+    protected ColorSensor colorLeft;
+    protected ColorSensor colorRight;
+    protected ColorSensor propellorColor;
 
 
     private static BNO055IMU imu;
@@ -95,8 +97,11 @@ public class OmniDriveTrainV2 {
         this.propeller = hardwareMap.servo.get("Propeller");
         this.intakeServo = hardwareMap.servo.get("Intake_Servo");
         this.towerGrasp = hardwareMap.servo.get("Tower_Grasp");
-        this.leftColor = hardwareMap.get(ColorSensor.class, "Color_Left");
-        this.rightColor = hardwareMap.get(ColorSensor.class, "Color_Right");
+        this.towerGrasp.setPosition(0.5);
+        this.towerServo = hardwareMap.servo.get("Tower_Servo");
+        this.colorLeft = hardwareMap.get(ColorSensor.class, "Color_Left");
+        this.colorRight = hardwareMap.get(ColorSensor.class, "Color_Right");
+        this.propellorColor = hardwareMap.get(ColorSensor.class, "propellor_color");
         frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
         frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
@@ -115,6 +120,8 @@ public class OmniDriveTrainV2 {
         towerHand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
+
+
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
         if(!gyroInitialized) {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -127,6 +134,13 @@ public class OmniDriveTrainV2 {
             imu.initialize(parameters);
         }
         gyroInitialized = true;
+    }
+
+    public void towerServoUp(){
+        towerServo.setPosition(0);
+    }
+    public void towerServoDown(){
+        towerServo.setPosition(0.5);
     }
 
     public void stop(){
@@ -217,8 +231,10 @@ public class OmniDriveTrainV2 {
         this.towerGrasp.setPosition(0.5);
     }
     public void towerClose(){
-        this.towerGrasp.setPosition(0);
+        this.towerGrasp.setPosition(1);
     }
+
+
 
     public void launch(){
        launcherL.setPower(0.53);
@@ -240,12 +256,29 @@ public class OmniDriveTrainV2 {
         launcherR.setPower(0.37);
     }
 
-    public void propel() throws InterruptedException {
-        propeller.setPosition(0.01);
-        Thread.sleep(770);
-        propeller.setPosition(0.5);
-        Thread.sleep(100);
+
+    private boolean isColor(){
+        return this.propellorColor.blue() > 100 || this.propellorColor.green() > 100 || this.propellorColor.red() > 100;
     }
+
+    private void runPropellorToColor() throws InterruptedException {
+        sleep(100);
+        long startTime = System.currentTimeMillis();
+        while (!isColor()) {
+            if(System.currentTimeMillis() - startTime > 2000){
+                break;
+            }
+            sleep(5);
+        }
+        this.propeller.setPosition(0.5);
+    }
+
+//    public void propel() throws InterruptedException {
+//        propeller.setPosition(0.01);
+//        Thread.sleep(770);
+//        propeller.setPosition(0.5);
+//        Thread.sleep(100);
+//    }
 
     public void knockIntake(){
         intakeServo.setPosition(0.1);
@@ -267,6 +300,217 @@ public class OmniDriveTrainV2 {
         towerHand.setPower(0);
     }
 
+    public void initMotors(){
+        frontLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void autoCrabPower(double power){
+        frontLeftWheel.setPower(-power);
+        frontRightWheel.setPower(-power);
+        backLeftWheel.setPower(power);
+        backRightWheel.setPower(power);
+    }
+
+    public void autoRotate(int distance, double power){
+        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
+        int frontRightPosition = frontRightWheel.getCurrentPosition();
+        int backLeftPosition = backLeftWheel.getCurrentPosition();
+        int backRightPosition = backRightWheel.getCurrentPosition();
+
+        frontLeftWheel.setTargetPosition(frontLeftPosition + distance);
+        frontRightWheel.setTargetPosition(frontRightPosition + distance);
+        backLeftWheel.setTargetPosition(backLeftPosition + distance);
+        backRightWheel.setTargetPosition(backRightPosition + distance);
+
+        frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeftWheel.setPower(power);
+//        frontRightWheel.setPower(power - correctionPower);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(power);
+        backRightWheel.setPower(power);
+
+        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
+            try {
+                sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        stopNow();
+    }
+
+    public void move(int distance, double power){
+        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
+        int frontRightPosition = frontRightWheel.getCurrentPosition();
+        int backLeftPosition = backLeftWheel.getCurrentPosition();
+        int backRightPosition = backRightWheel.getCurrentPosition();
+
+        frontLeftWheel.setTargetPosition(frontLeftPosition - distance);
+        frontRightWheel.setTargetPosition(frontRightPosition + distance);
+        backLeftWheel.setTargetPosition(backLeftPosition - distance);
+        backRightWheel.setTargetPosition(backRightPosition + distance);
+
+        frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeftWheel.setPower(power);
+//        frontRightWheel.setPower(power - correctionPower);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(power);
+        backRightWheel.setPower(power);
+
+        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
+            try {
+                sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        stopNow();
+    }
+
+    public void autoCrab(int distance, double power){
+        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
+        int frontRightPosition = frontRightWheel.getCurrentPosition();
+        int backLeftPosition = backLeftWheel.getCurrentPosition();
+        int backRightPosition = backRightWheel.getCurrentPosition();
+
+        frontLeftWheel.setTargetPosition(frontLeftPosition - distance);
+        frontRightWheel.setTargetPosition(frontRightPosition - distance);
+        backLeftWheel.setTargetPosition(backLeftPosition + distance);
+        backRightWheel.setTargetPosition(backRightPosition + distance);
+
+        frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeftWheel.setPower(power);
+//        frontRightWheel.setPower(power - correctionPower);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(power);
+        backRightWheel.setPower(power);
+
+        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
+            try {
+                sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        stopNow();
+    }
+
+    protected void stopNow(){
+        frontLeftWheel.setPower(0);
+        frontRightWheel.setPower(0);
+        backLeftWheel.setPower(0);
+        backRightWheel.setPower(0);
+    }
+
+    protected void crabToBlue(boolean right) throws InterruptedException {
+        double power = right ? 0.2:-0.2;
+        boolean done = false;
+        while (!done) {
+            if (this.colorRight.blue() < 180) {
+                this.autoCrabPower(power);
+            } else {
+                this.stopNow();
+                done = true;
+            }
+            Thread.sleep(5);
+        }
+    }
+
+    private boolean isLeftWhite(){
+        return this.colorLeft.red() > 600 && this.colorLeft.green() > 600
+                && this.colorLeft.blue() > 600;
+    }
+
+    private boolean isRightWhite(){
+        return this.colorRight.red() > 300 && this.colorLeft.green() > 300
+                && this.colorRight.blue() > 300;
+    }
+
+    public void rightCorrect(double power){
+
+        frontLeftWheel.setPower(0);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(0);
+        backRightWheel.setPower(power);
+    }
+
+    public void leftCorrect(double power){
+        frontLeftWheel.setPower(-power);
+        frontRightWheel.setPower(0);
+        backLeftWheel.setPower(-power);
+        backRightWheel.setPower(0);
+    }
+
+    public void lineDetect(boolean forward) {
+        boolean leftDone = false;
+        boolean rightDone = false;
+        double power = forward ? 0.1: -0.1;
+        this.movePower(power);
+        while(!(leftDone && rightDone)){
+            if(this.isLeftWhite() && !leftDone ){
+                this.rightCorrect(power);
+                leftDone = true;
+            }
+            if (this.isRightWhite() && !rightDone)
+            {
+                this.leftCorrect(power);
+                rightDone = true;
+            }
+
+        }
+        this.stopNow();
+    }
+
+    public void  movePower (double power)  {
+        frontLeftWheel.setPower(-power);
+        frontRightWheel.setPower(power);
+        backLeftWheel.setPower(-power);
+        backRightWheel.setPower(power);
+    }
+
+    public void crabPower (double power){
+        frontLeftWheel.setPower(-power);
+        frontRightWheel.setPower(-power);
+        backLeftWheel.setPower(power);
+        backRightWheel.setPower(power);
+    }
+
+
+    private void propel() throws InterruptedException {
+        propeller.setPosition(0.01);
+        this.runPropellorToColor();
+    }
+
+    public void autoShoot() throws InterruptedException {
+        this.autoRotate(135, 0.2);
+        this.propel();
+        this.autoRotate(75, 0.2);
+        this.propel();
+        this.autoRotate(65, 0.2);
+        this.propel();
+    }
 
     public void drive(double moveValue, double crabValue, double turnValue, double maxPower) {
 
