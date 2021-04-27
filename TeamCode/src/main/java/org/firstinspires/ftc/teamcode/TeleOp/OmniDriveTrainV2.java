@@ -102,10 +102,19 @@ public class OmniDriveTrainV2 {
         this.colorLeft = hardwareMap.get(ColorSensor.class, "Color_Left");
         this.colorRight = hardwareMap.get(ColorSensor.class, "Color_Right");
         this.propellorColor = hardwareMap.get(ColorSensor.class, "propellor_color");
-        frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
-        backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
-        frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
-        backRightWheel.setDirection(DcMotor.Direction.FORWARD);
+
+        //OLD MOTORS
+//        frontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
+//        backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
+//        frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
+//        backRightWheel.setDirection(DcMotor.Direction.FORWARD);
+
+        //NEW MOTORS
+        frontLeftWheel.setDirection(DcMotor.Direction.FORWARD);
+        backLeftWheel.setDirection(DcMotor.Direction.FORWARD);
+        frontRightWheel.setDirection(DcMotor.Direction.REVERSE);
+        backRightWheel.setDirection(DcMotor.Direction.REVERSE);
+
         launcherL.setDirection(DcMotor.Direction.REVERSE);
         launcherR.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.REVERSE);
@@ -123,7 +132,7 @@ public class OmniDriveTrainV2 {
 
 
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
-        if(!gyroInitialized) {
+//        if(!gyroInitialized) {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -132,8 +141,8 @@ public class OmniDriveTrainV2 {
             parameters.loggingEnabled = false;
 
             imu.initialize(parameters);
-        }
-        gyroInitialized = true;
+//        }
+//        gyroInitialized = true;
     }
 
     public void towerServoUp(){
@@ -532,49 +541,16 @@ public class OmniDriveTrainV2 {
         gyroAngle = -1 * gyroAngle;
 
 
-
-
-        //MOVEMENT
-//        if (maxPower == 0.8) {
             theta = Math.atan2(stick_y, stick_x) - gyroAngle - (Math.PI / 2);
             Px = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta + Math.PI / 4));
             Py = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta - Math.PI / 4));
-//        }
 
-//        if (maxPower == 0.4){
-//            theta = Math.atan2(stick_y/2, stick_x/2) - gyroAngle - (Math.PI / 2);
-//            Px = Math.sqrt(Math.pow(stick_x/2, 2) + Math.pow(stick_y/2, 2)) * (Math.sin(theta + Math.PI / 4));
-//            Py = Math.sqrt(Math.pow(stick_x/2, 2) + Math.pow(stick_y/2, 2)) * (Math.sin(theta - Math.PI / 4));
-//        }
-
-
-//        telemetry.addData("tower grabber", towerGrasp.getPosition());
-
-
-
-//        telemetry.addData("Stick_X", stick_x);
-//        telemetry.addData("Stick_Y", stick_y);
-//        telemetry.addData("Magnitude",  Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));
-//        telemetry.addData("Front Left", Py - Protate);
-//        telemetry.addData("Back Left", Px - Protate);
-//        telemetry.addData("Back Right", Py + Protate);
-//        telemetry.addData("Front Right", Px + Protate);
-
-        if (launcherL.getPower() > 0.4){
-            telemetry.addData("GO!!!!!!!", launcherL.getPower());
-        }
-        else{
-//            telemetry.addData("wait", launcherL.getPower());
-        }
 
         frontLeftWheel.setPower(Py - Protate);
         backLeftWheel.setPower(Px - Protate);
         backRightWheel.setPower(Py + Protate);
         frontRightWheel.setPower(Px + Protate);
 
-
-//        telemetry.addData("Color Val L", leftColor.argb());
-//        telemetry.addData("Color Val L", rightColor.argb());
 
         telemetry.update();
     }

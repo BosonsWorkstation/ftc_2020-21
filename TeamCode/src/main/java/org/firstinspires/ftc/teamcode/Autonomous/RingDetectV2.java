@@ -140,7 +140,7 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
 
             this.autoOmni.initDriveMotors(hardwareMap, telemetry);
 
-            lineDetect(true);
+            lineDetect(true, 0.08);
             sleep(SLEEP_TIME);
 
             //Backup to get to launch position
@@ -153,7 +153,7 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
 
             this.autoOmni.launchStop();
             this.autoOmni.initDriveMotors(hardwareMap, telemetry);
-            lineDetect(true);
+            lineDetect(true, 0.08);
 
             dropWobble(ringPosition, 1);
 
@@ -171,28 +171,37 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
     protected void dropWobble(SkystoneDeterminationPipeline.RingPosition ringPosition, int wobbleNum){
         switch (ringPosition){
             case NONE:
-                telemetry.addData(String.valueOf(ringPosition), "ZERO Rings Detected");
-                this.autoOmni.move(getCorrectedDistance(450), this.getDefaultPower());
+//                this.autoOmni.move(getCorrectedDistance(450), this.getDefaultPower());
+
                 sleep(SLEEP_TIME);
                 if(wobbleNum != 1){
-                    this.autoOmni.crab(getCorrectedDistance(-200), this.getDefaultPower());
+//                    this.autoOmni.crab(getCorrectedDistance(-400), this.getDefaultPower());
+//                    this.autoOmni.rotate(-30, getDefaultPower());
                 }
                 else{
-                    this.autoOmni.crab(getCorrectedDistance(-400), this.getDefaultPower());
+                    this.autoOmni.rotate(getCorrectedDistance(180), this.getDefaultPower());
+                    this.autoOmni.crab(getCorrectedDistance(-700), this.getDefaultPower());
+                    sleep(100);
+                    this.autoOmni.towerServoUp();
+                    sleep(100);
+                    this.autoOmni.rotate(getCorrectedDistance(-250), this.getDefaultPower());
+                    this.autoOmni.move(getCorrectedDistance(250), this.getDefaultPower());
                 }
                 break;
             case ONE:
-                telemetry.addData(String.valueOf(ringPosition), "ONE Ring Detected");
                 if (wobbleNum != 1) {
                     this.autoOmni.crab(getCorrectedDistance(700),this.getDefaultPower());
                     sleep(SLEEP_TIME);
                     this.autoOmni.move(getCorrectedDistance(1300), 0.6);
                 }
                 else{
-                    this.autoOmni.crab(getCorrectedDistance(700),this.getDefaultPower());
+//                    this.autoOmni.crab(getCorrectedDistance(700),this.getDefaultPower());
+                    this.autoOmni.move(getCorrectedDistance(1700), 0.6);
                     sleep(SLEEP_TIME);
-                    this.autoOmni.move(getCorrectedDistance(1400), 0.6);
+                    this.autoOmni.towerServoUp();
+                    sleep(SLEEP_TIME);
                 }
+
                 break;
             case FOUR:
                 if (wobbleNum != 1){
@@ -202,6 +211,7 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
                 this.autoOmni.move(getCorrectedDistance(2250), this.getDefaultPower());
                 sleep(SLEEP_TIME);
                 this.autoOmni.crab(getCorrectedDistance(-625), this.getDefaultPower());
+                this.autoOmni.towerServoUp();
                 break;
             default:
                 telemetry.addData(String.valueOf(ringPosition), "NO Rings Detected");
@@ -209,7 +219,7 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
         }
         telemetry.update();
         sleep(100);
-        this.autoOmni.towerServoUp();
+
         this.autoOmni.towerOpen();
 
         getBackToWhiteLine(ringPosition);
@@ -218,13 +228,14 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
     protected void getBackToWhiteLine(SkystoneDeterminationPipeline.RingPosition ringPosition){
         switch (ringPosition){
             case NONE:
-                this.autoOmni.crab(getCorrectedDistance(1400), this.getDefaultPower());
-
+//                this.autoOmni.crab(getCorrectedDistance(700), this.getDefaultPower());
+                this.autoOmni.crab(getCorrectedDistance(300), 0.4);
+                sleep(SLEEP_TIME);
                 break;
             case ONE:
-                this.autoOmni.crab(getCorrectedDistance(200), this.getDefaultPower());
+                this.autoOmni.rotate(getCorrectedDistance(-280), 0.6);
                 sleep(SLEEP_TIME);
-                this.autoOmni.move(getCorrectedDistance(-700), 0.6);
+                this.autoOmni.move(getCorrectedDistance(-300), 0.6);
                 break;
             case FOUR:
                 this.autoOmni.crab(getCorrectedDistance(1550), this.getDefaultPower());
@@ -240,7 +251,7 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
     protected void dropSecondWobble(SkystoneDeterminationPipeline.RingPosition ringPosition){
 //        this.autoOmni.move(2500, getDefaultPower());
         this.autoOmni.initDriveMotors(hardwareMap, telemetry);
-        this.lineDetect(true);
+        this.lineDetect(true, 0.08);
 //        dropWobble(ringPosition,);
 
 //        switch (ringPosition){
@@ -265,24 +276,43 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
     }
 
     protected void getSecondWobble(SkystoneDeterminationPipeline.RingPosition ringPosition){
-        this.autoOmni.move(getCorrectedDistance(-2750), getDefaultPower());
+        this.autoOmni.move(getCorrectedDistance(-2900), getDefaultPower());
+        this.autoOmni.move(getCorrectedDistance(-150), 0.4);
+
+//        this.autoOmni.rotate(75, 0.4);
+
         this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+        crabToBlueBack(false);
 
-        crabToBlueFakeRight();
-        this.autoOmni.move(getCorrectedDistance(400), getDefaultPower());
-
-        this.autoOmni.autoTowerHand(500);
-        sleep(500);
+//        this.autoOmni.crab(getCorrectedDistance(100), getDefaultPower());
+        this.autoOmni.move(getCorrectedDistance(300), getDefaultPower());
+        this.autoOmni.rotate(getCorrectedDistance(150), getDefaultPower());
+        sleep(SLEEP_TIME);
         this.autoOmni.towerClose();
+        sleep(500);
+//        this.autoOmni.autoTowerHand(500);
+        this.wobbleDropThread(autoOmni, 1000, false);
+        sleep(500);
+//        this.autoOmni.rotate(getCorrectedDistance(-150), getDefaultPower());
         if(ringPosition == SkystoneDeterminationPipeline.RingPosition.FOUR){
             this.autoOmni.move(getCorrectedDistance(2500), getDefaultPower());
             this.autoOmni.towerOpen();
             return;
         }
-        this.autoOmni.move(getCorrectedDistance(2200), getDefaultPower());
 
-        this.autoOmni.initDriveMotors(hardwareMap, telemetry);
-        this.lineDetect(true);
+
+        if (ringPosition == SkystoneDeterminationPipeline.RingPosition.NONE) {
+            this.autoOmni.move(getCorrectedDistance(2500), getDefaultPower());
+            this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+            this.lineDetect(true, 0.3);
+            this.autoOmni.move(150, getDefaultPower());
+        }
+        else{
+            this.autoOmni.move(getCorrectedDistance(2300), getDefaultPower());
+            this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+            this.lineDetect(true, 0.08);
+        }
+
     }
 
     protected void crabToBlueFakeRight(){
@@ -343,7 +373,7 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
     }
 
     protected void crabToBlue(boolean right){
-        double power = right ? 0.2:-0.2;
+        double power = right ? 0.1:-0.1;
         while (opModeIsActive()) {
             if (this.autoOmni.colorRight.blue() < 180) {
                 this.autoOmni.crabPower(power);
@@ -355,35 +385,124 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
         }
     }
 
+    protected void crabToBlueBack(boolean right){
+        double power = right ? 0.1:-0.1;
+        while (opModeIsActive()) {
+            if (this.autoOmni.colorBack.blue() < 400) {
+                this.autoOmni.crabPower(power);
+            } else {
+                this.autoOmni.stopNow();
+                break;
+            }
+            sleep(5);
+        }
+    }
+
+//    private boolean isLeftWhite(){
+//        telemetry.addData("Left Red", this.autoOmni.colorLeft.red());
+//        telemetry.addData("Left Green", this.autoOmni.colorLeft.green());
+//        telemetry.addData("Left Blue", this.autoOmni.colorLeft.blue());
+//        return this.autoOmni.colorLeft.red() > 400 && this.autoOmni.colorLeft.green() > 400
+//                && this.autoOmni.colorLeft.blue() > 400;
+//    }
+
     private boolean isLeftWhite(){
-        return this.autoOmni.colorLeft.red() > 600 && this.autoOmni.colorLeft.green() > 600
-                && this.autoOmni.colorLeft.blue() > 600;
+        telemetry.addData("Left Red", this.autoOmni.colorLeft.red());
+        telemetry.addData("Left Green", this.autoOmni.colorLeft.green());
+        telemetry.addData("Left Blue", this.autoOmni.colorLeft.blue());
+        return this.autoOmni.colorLeft.red() > 200 && this.autoOmni.colorLeft.green() > 200
+                && this.autoOmni.colorLeft.blue() > 200;
     }
 
     private boolean isRightWhite(){
-        return this.autoOmni.colorRight.red() > 300 && this.autoOmni.colorLeft.green() > 300
-                && this.autoOmni.colorRight.blue() > 300;
+        telemetry.addData("Right Red", this.autoOmni.colorRight.red());
+        telemetry.addData("Right Green", this.autoOmni.colorRight.green());
+        telemetry.addData("Right Blue", this.autoOmni.colorRight.blue());
+        return this.autoOmni.colorRight.red() > 200 && this.autoOmni.colorRight.green() > 200
+                && this.autoOmni.colorRight.blue() > 200;
     }
 
-    public void lineDetect(boolean forward) {
+//    public void lineDetect(boolean forward) {
+//        boolean leftDone = false;
+//        boolean rightDone = false;
+//        double power = forward ? 0.1: -0.1;
+//        this.autoOmni.movePower(power);
+//        while(!(leftDone && rightDone) && opModeIsActive()){
+//            if(this.isLeftWhite() && !leftDone ){
+////                this.autoOmni.rightCorrect(power);
+//                this.autoOmni.leftStop();
+//                leftDone = true;
+//            }
+//            if (this.isRightWhite() && !rightDone)
+//            {
+////                this.autoOmni.leftCorrect(power);
+//                this.autoOmni.rightStop();
+//                rightDone = true;
+//            }
+//            sleep(5);
+//        }
+//        this.autoOmni.stopNow();
+//    }
+
+
+    public void lineDetect(boolean forward, double powerIn) {
+        this.telemetry.setAutoClear(true);
         boolean leftDone = false;
         boolean rightDone = false;
-        double power = forward ? 0.1: -0.1;
+        double power = forward ? powerIn: -powerIn;
         this.autoOmni.movePower(power);
-        while(!(leftDone && rightDone) && opModeIsActive()){
-            if(this.isLeftWhite() && !leftDone ){
-                this.autoOmni.rightCorrect(power);
-                leftDone = true;
-            }
-            if (this.isRightWhite() && !rightDone)
-            {
+        while(opModeIsActive()){
+            if (this.isRightWhite()) {
                 this.autoOmni.leftCorrect(power);
+//                this.autoOmni.rightStop();
                 rightDone = true;
+            }else{
+                rightDone = false;
             }
 
+            if(this.isLeftWhite()){
+                this.autoOmni.rightCorrect(power);
+//                this.autoOmni.leftStop();
+                leftDone = true;
+            }else{
+                leftDone =false;
+            }
+            telemetry.update();
+            if(leftDone && rightDone){
+                break;
+            }
+            sleep(5);
         }
         this.autoOmni.stopNow();
     }
+
+
+//    public void lineDetect(boolean forward) {
+//        this.telemetry.setAutoClear(true);
+//        boolean leftDone = false;
+//        boolean rightDone = false;
+//        double power = forward ? 0.05: -0.05;
+//        this.autoOmni.movePower(power);
+//        while(opModeIsActive()){
+//            if (!rightDone && this.isRightWhite()) {
+//                //                this.autoOmni.leftCorrect(power);
+//                this.autoOmni.rightStop();
+//                rightDone = true;
+//            }
+//
+//            if(!leftDone && this.isLeftWhite()){
+//    //                this.autoOmni.rightCorrect(power);
+//                this.autoOmni.leftStop();
+//                leftDone = true;
+//            }
+//            telemetry.update();
+//            if(leftDone && rightDone){
+//                break;
+//            }
+//            sleep(5);
+//        }
+//        this.autoOmni.stopNow();
+//    }
 
     private boolean isColor(){
         return this.propellorColor.blue() > 100 || this.propellorColor.green() > 100 || this.propellorColor.red() > 100;
@@ -448,7 +567,7 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile RingPosition position = RingPosition.FOUR;
+        public volatile RingPosition position = RingPosition.NONE;
         public SkystoneDeterminationPipeline(double xPosition, double yPosition){
             super();
             this.REGION1_TOPLEFT_ANCHOR_POINT = new Point(xPosition, yPosition);
@@ -516,13 +635,13 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
         }
     }
 
-    protected void wobbleDropThread(final AutoOmniDriveTrainV1 autoOmni, final long time) {
+    protected void wobbleDropThread(final AutoOmniDriveTrainV1 autoOmni, final long time, final boolean up) {
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
                 telemetry.setAutoClear(false);
                 while (opModeIsActive()) {
-                    autoOmni.autoTowerHand(time);
+                    autoOmni.autoTowerHand(time, up);
                     break;
                 }
             }
@@ -530,18 +649,18 @@ public class RingDetectV2 extends LinearOpMode//extends EasyOpenCV
         t1.start();
     }
 
-    protected void wobbleUpThread(final AutoOmniDriveTrainV1 autoOmni, final long time) {
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                telemetry.setAutoClear(false);
-                while (opModeIsActive()) {
-                    autoOmni.autoTowerHand(time);
-                    break;
-                }
-            }
-        });
-        t1.start();
-    }
+//    protected void wobbleUpThread(final AutoOmniDriveTrainV1 autoOmni, final long time, final boolean up) {
+//        Thread t1 = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                telemetry.setAutoClear(false);
+//                while (opModeIsActive()) {
+//                    autoOmni.autoTowerHand(time, up);
+//                    break;
+//                }
+//            }
+//        });
+//        t1.start();
+//    }
 
 }

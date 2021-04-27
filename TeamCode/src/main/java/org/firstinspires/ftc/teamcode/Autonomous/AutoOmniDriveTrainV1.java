@@ -7,11 +7,16 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.TeleOp.OmniDriveTrainV2;
 
 public class AutoOmniDriveTrainV1{
@@ -29,6 +34,7 @@ public class AutoOmniDriveTrainV1{
     protected  RevBlinkinLedDriver lights;
     protected ColorSensor colorLeft;
     protected ColorSensor colorRight;
+    protected ColorSensor colorBack;
     float hsvValues[] = {0F, 0F, 0F};
     final float values[] = hsvValues; //these hsv values are for alphaColor()
 
@@ -51,7 +57,8 @@ public class AutoOmniDriveTrainV1{
     private static final int TICKS_PER_REVOLUTION = 280;
     private static final double DISTANCE_PER_REVOLUTION = 4 * Math.PI;
     private static final double CRAB_POWER = .2;
-    private static final double correctionPower = 0.08;
+    private static final double correctionPower = 0.05;
+    private static boolean gyroInitialized = false;
 //    Telemetry.Item currentPositionTel;
 //    Telemetry.Item targetValueTel;
 
@@ -62,9 +69,23 @@ public class AutoOmniDriveTrainV1{
 //        super(hardwareMap,telemetry);
 //        currentPositionTel = telemetry.addData("Current Position", 0);
 //        targetValueTel = telemetry.addData("Target ValueL", 0);
-
+        this.telemetry = telemetry;
+        initializeGyro(hardwareMap, telemetry);
     }
 
+    public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
+//        if(!gyroInitialized) {
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.mode = BNO055IMU.SensorMode.IMU;
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = false;
+
+            imu.initialize(parameters);
+//        }
+//        gyroInitialized = true;
+    }
 
     public void initDriveMotors(HardwareMap hardwareMap, Telemetry telemetry){
         this.backLeftWheel = hardwareMap.dcMotor.get("Back_Left_Wheel");
@@ -74,7 +95,7 @@ public class AutoOmniDriveTrainV1{
         this.initDriveMotors();
     }
 
-    private void initDriveMotors(){
+    public void initDriveMotors(){
         this.initMotor(frontLeftWheel);
 
         this.initMotor(frontRightWheel);
@@ -111,7 +132,7 @@ public class AutoOmniDriveTrainV1{
     private void initColor(HardwareMap hardwareMap, Telemetry telemetry){
         this.colorLeft = hardwareMap.get(ColorSensor.class, "Color_Left");
         this.colorRight = hardwareMap.get(ColorSensor.class, "Color_Right");
-
+        this.colorBack = hardwareMap.get(ColorSensor.class, "Color_Back");
     }
 
     public void initialize(HardwareMap hardwareMap, Telemetry telemetry){
@@ -130,6 +151,7 @@ public class AutoOmniDriveTrainV1{
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public int getTargetValue(int distance){
@@ -158,9 +180,20 @@ public class AutoOmniDriveTrainV1{
     public void leftCorrect(double power){
         frontLeftWheel.setPower(-power);
         frontRightWheel.setPower(0);
-        backLeftWheel.setPower(-power - correctionPower);
+        backLeftWheel.setPower(-power);
         backRightWheel.setPower(0);
     }
+
+    public void rightStop(){
+        frontRightWheel.setPower(0);
+        backRightWheel.setPower(0);
+    }
+    public void leftStop(){
+        frontLeftWheel.setPower(0);
+        backLeftWheel.setPower(0);
+    }
+
+
 
     public void  movePower (double power)  {
         frontLeftWheel.setPower(-power);
@@ -173,7 +206,7 @@ public class AutoOmniDriveTrainV1{
     public void crabPower (double power){
         frontLeftWheel.setPower(-power);
         frontRightWheel.setPower(-power);
-        backLeftWheel.setPower(power + correctionPower);
+        backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
     }
 
@@ -188,6 +221,34 @@ public class AutoOmniDriveTrainV1{
     public void towerHandStop(){
         towerHand.setPower(0);
     }
+
+    public void stopSoft(){
+        double power = frontRightWheel.getPower();
+        while (power > 0){
+            power = power - 0.05;
+            if(power < 0){
+                break;
+            }
+            else{
+                backLeftWheel.setPower(power);
+                backRightWheel.setPower(power);
+                frontLeftWheel.setPower(power);
+                frontRightWheel.setPower(power);
+            }
+            sleep(20);
+        }
+        backLeftWheel.setPower(0);
+        backRightWheel.setPower(0);
+        frontLeftWheel.setPower(0);
+        frontRightWheel.setPower(0);
+    }
+
+//    public void stopSoft(){
+//        this.stopSoft(this.backLeftWheel);
+//        this.stopSoft(this.backRightWheel);
+//        this.stopSoft(this.frontLeftWheel);
+//        this.stopSoft(this.frontRightWheel);
+//    }
 
 
     public void rotate(int distance, double power) {
@@ -209,18 +270,15 @@ public class AutoOmniDriveTrainV1{
         frontLeftWheel.setPower(power);
 //        frontRightWheel.setPower(power - correctionPower);
         frontRightWheel.setPower(power);
-        backLeftWheel.setPower(power + correctionPower);
+        backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-//            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
-//            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
-//            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
-//            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
-//            telemetry.update();
+            sleep(10);
         }
 
         stopNow();
+//        stopSoft();
     }
         public void stopNow(){
         frontRightWheel.setPower(0);
@@ -249,18 +307,15 @@ public class AutoOmniDriveTrainV1{
         frontLeftWheel.setPower(power);
 //        frontRightWheel.setPower(power - correctionPower);
         frontRightWheel.setPower(power);
-        backLeftWheel.setPower(power + correctionPower);
-        backRightWheel.setPower(power);
+        backLeftWheel.setPower(power - correctionPower);
+        backRightWheel.setPower(power - correctionPower);
 
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-//            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
-//            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
-//            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
-//            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
-//            telemetry.update();
+            sleep(5);
         }
 
         stopNow();
+//        stopSoft();
     }
 
     public void knockIntake(){
@@ -293,28 +348,49 @@ public class AutoOmniDriveTrainV1{
         backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeftWheel.setPower(power);
-//        frontRightWheel.setPower(power - correctionPower);
+        frontLeftWheel.setPower(power + correctionPower);
         frontRightWheel.setPower(power);
-//        backLeftWheel.setPower(power + correctionPower);
+        backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
 
-        if(distance > 0){
-            backLeftWheel.setPower(power + correctionPower);
-        }
-        else{
-            backLeftWheel.setPower(power - correctionPower);
-        }
-
+//        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        double heading = angles.firstAngle;
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-//            telemetry.addData("Back Left", backLeftWheel.getCurrentPosition());
-//            telemetry.addData("Back Right", backRightWheel.getCurrentPosition());
-//            telemetry.addData("Front Left", frontLeftWheel.getCurrentPosition());
-//            telemetry.addData("Front Right", frontRightWheel.getCurrentPosition());
+            sleep(5);
+            if (power > 0.3 && Math.abs(distance) > 400){
+                if (Math.abs(frontRightWheel.getTargetPosition() - frontRightWheel.getCurrentPosition()) < 400) {
+                    frontLeftWheel.setPower(frontLeftWheel.getPower() * 0.8);
+                    frontRightWheel.setPower(frontRightWheel.getPower() * 0.8);
+                    backLeftWheel.setPower(backLeftWheel.getPower() * 0.8);
+                    backRightWheel.setPower(backRightWheel.getPower() * 0.8);
+                }
+            }
+
+//            Orientation currentAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//            double currentHeading = currentAngles.firstAngle;
+//            telemetry.addData("current heading", currentHeading);
+//            telemetry.addData("heading", heading);
 //            telemetry.update();
+//            if (currentHeading - heading > 5){
+//                frontLeftWheel.setPower(frontLeftWheel.getPower() - 0.05);
+//                backLeftWheel.setPower(backLeftWheel.getPower() - 0.05);
+//            }
+//            if(currentHeading - heading < -5){
+//                frontRightWheel.setPower(frontRightWheel.getPower() - 0.05);
+//                backRightWheel.setPower(backRightWheel.getPower() - 0.05);
+//            }
         }
 
         stopNow();
+//        stopSoft();
+    }
+
+    private void sleep(long ms){
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void towerOpen(){
@@ -325,10 +401,10 @@ public class AutoOmniDriveTrainV1{
     }
 
     public void powerLaunch(){
-//        this.launcherR.setPower(0.35);
-//        this.launcherL.setPower(0.35);
-        this.launcherR.setPower(0.37);
-        this.launcherL.setPower(0.37);
+        this.launcherR.setPower(0.35);
+        this.launcherL.setPower(0.35);
+//        this.launcherR.setPower(0.37);
+//        this.launcherL.setPower(0.37);
     }
 
     public void launch() {
@@ -381,13 +457,18 @@ public class AutoOmniDriveTrainV1{
 
     }
 
-    public void autoTowerHand(){
-        this.autoTowerHand(2000);
+    public void autoTowerHand(boolean up){
+        this.autoTowerHand(2000, up);
     }
 
-    public void autoTowerHand(long time){
+    public void autoTowerHand(long time, boolean up){
         try {
-            this.towerHandUp();
+            if(up){
+                this.towerHandUp();
+            }
+            else{
+                this.towerHandDown();
+            }
             Thread.sleep(time);
             this.towerHandStop();
 
@@ -415,7 +496,7 @@ public class AutoOmniDriveTrainV1{
                 backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 frontRightWheel.setPower(power);
-                backLeftWheel.setPower(power + correctionPower);
+                backLeftWheel.setPower(power);
 
                 break;
             case SOUTH_WEST:
@@ -448,12 +529,12 @@ public class AutoOmniDriveTrainV1{
                 backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 frontRightWheel.setPower(power);
-                backLeftWheel.setPower(power + correctionPower);
+                backLeftWheel.setPower(power);
 
                 break;
         }
 
-        while(frontLeftWheel.isBusy() || frontRightWheel.isBusy() || backLeftWheel.isBusy() || backRightWheel.isBusy()){
+        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
@@ -462,6 +543,7 @@ public class AutoOmniDriveTrainV1{
         }
 
         stopNow();
+//        stopSoft();
     }
 
 

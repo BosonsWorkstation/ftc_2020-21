@@ -161,48 +161,50 @@ public class UltimateTeleopV1 extends LinearOpMode {
 
 
             if(gamepad1.dpad_up){
-////                telemetry.setAutoClear(false);
-//                telemetry.addData("Fake Right Blue", this.driveTrain2.colorLeft.blue());
-//                telemetry.addData("Fake Right Red", this.driveTrain2.colorLeft.red());
-//                telemetry.addData("Fake Right Green", this.driveTrain2.colorLeft.green());
-//                telemetry.addData("Fake Right Alpha", this.driveTrain2.colorLeft.alpha());
-//                telemetry.addData("Fake Right argb", this.driveTrain2.colorLeft.argb());
-//                telemetry.update();
+                telemetry.setAutoClear(true);
+                telemetry.addData("Left Red", this.driveTrain2.colorRight.red());
+                telemetry.addData("Left Green", this.driveTrain2.colorRight.green());
+                telemetry.addData("Left Blue", this.driveTrain2.colorRight.blue());
+
+                telemetry.addData("Right Red", this.driveTrain2.colorLeft.red());
+                telemetry.addData("Right Green", this.driveTrain2.colorLeft.green());
+                telemetry.addData("Right Blue", this.driveTrain2.colorLeft.blue());
+                telemetry.update();
             }
 
-            if(gamepad1.left_bumper){
-//                launch();
+//            if(gamepad1.left_bumper){
+////                launch();
+////
+////
+////                crabToBlue();
+////
+////                this.autoOmni.crab(200, 0.2);
+////
+////                this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+////                lineDetect(true);
+////                sleep(SLEEP_TIME);
+////
+////
+////                this.autoOmni.move(-150, 0.2);
+////                sleep(SLEEP_TIME);
 //
+//                this.driveTrain2.launch();
 //
-//                crabToBlue();
+//                this.driveTrain2.initMotors();
+//                this.driveTrain2.crabToBlue(false);
 //
-//                this.autoOmni.crab(200, 0.2);
+//                this.driveTrain2.autoCrab(200, 0.2);
 //
-//                this.autoOmni.initDriveMotors(hardwareMap, telemetry);
-//                lineDetect(true);
-//                sleep(SLEEP_TIME);
+//                this.driveTrain2.initMotors();
+//                this.driveTrain2.lineDetect(true);
+//                sleep(10);
 //
+//                this.driveTrain2.move(-150, 0.2);
+//            }
 //
-//                this.autoOmni.move(-150, 0.2);
-//                sleep(SLEEP_TIME);
-
-                this.driveTrain2.launch();
-
-                this.driveTrain2.initMotors();
-                this.driveTrain2.crabToBlue(false);
-
-                this.driveTrain2.autoCrab(200, 0.2);
-
-                this.driveTrain2.initMotors();
-                this.driveTrain2.lineDetect(true);
-                sleep(10);
-
-                this.driveTrain2.move(-150, 0.2);
-            }
-
-            if(gamepad1.right_bumper){
-                this.driveTrain2.autoShoot();
-            }
+//            if(gamepad1.right_bumper){
+//                this.driveTrain2.autoShoot();
+//            }
 
             this.isColor();
 //            Thread.sleep(50);

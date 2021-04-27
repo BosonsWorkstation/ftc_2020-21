@@ -33,11 +33,13 @@ public class AutoStateV2 extends AutoStateV1 {
     protected void moveToLine(SkystoneDeterminationPipeline.RingPosition ringPosition){
         switch (ringPosition){
             case NONE:
-                this.autoOmni.move(getCorrectedDistance(2950), 0.6);
+//                this.autoOmni.move(getCorrectedDistance(2950), 0.6);
+                this.autoOmni.move(getCorrectedDistance(2750), 0.4);
                 break;
             case ONE:
             case FOUR:
-                this.autoOmni.move(getCorrectedDistance(2650), this.getDefaultPower(ringPosition));
+                this.autoOmni.move(getCorrectedDistance(2750), 0.4);
+//                this.autoOmni.move(getCorrectedDistance(2650), this.getDefaultPower(ringPosition));
                 break;
 
 //            case FOUR:
@@ -53,7 +55,8 @@ public class AutoStateV2 extends AutoStateV1 {
     protected void getBackToWhiteLine(SkystoneDeterminationPipeline.RingPosition ringPosition){
         switch (ringPosition){
             case NONE:
-                this.autoOmni.crab(getCorrectedDistance(1400), this.getDefaultPower(ringPosition));
+//                this.autoOmni.crab(getCorrectedDistance(1400), this.getDefaultPower(ringPosition));
+                this.autoOmni.crab(getCorrectedDistance(1400), 0.3);
                 break;
             case ONE:
                 this.autoOmni.crab(getCorrectedDistance(200), this.getDefaultPower(ringPosition));

@@ -65,15 +65,16 @@ public class AutoStateV1 extends RingDetectV2{
 
     @Override
     protected void shootRings(){
-        this.autoOmni.rotate(getCorrectedDistance(135), 0.2);
+        this.autoOmni.rotate(getCorrectedDistance(145), 0.4);
         this.propel();
 //        sleep(SLEEP_TIME);
-        this.autoOmni.rotate(getCorrectedDistance(75), 0.2);
+        this.autoOmni.rotate(getCorrectedDistance(65), 0.4);
         this.propel();
 //        sleep(SLEEP_TIME);
-        this.autoOmni.rotate(getCorrectedDistance(65), 0.2);
+        this.autoOmni.rotate(getCorrectedDistance(50), 0.4);
         this.propel();
-//        sleep(SLEEP_TIME);
+        sleep(100);
+        this.autoOmni.launchStop();
     }
 
     protected void shootRings(SkystoneDeterminationPipeline.RingPosition ringPosition){
@@ -91,43 +92,57 @@ public class AutoStateV1 extends RingDetectV2{
 
         moveToLine(ringPosition);
 
+        this.autoOmni.initDriveMotors();
+        this.lineDetect(true, 0.1);
+
+        this.autoOmni.move(getCorrectedDistance(-300), getDefaultPower());
         //Start Launcher Motors
         launch();
-
-
+        sleep(100);
+        this.autoOmni.crab(getCorrectedDistance(-300), 0.6);
         crabToBlue();
 
-        this.autoOmni.crab(getCorrectedDistance(200), 0.2);
+        this.autoOmni.crab(getCorrectedDistance(200), 0.3);
 
-        this.autoOmni.initDriveMotors(hardwareMap, telemetry);
-        lineDetect(true);
+        this.autoOmni.initDriveMotors();
+        lineDetect(true, 0.08);
         sleep(SLEEP_TIME);
 
 
-        this.autoOmni.move(getCorrectedDistance(-150), 0.2);
+        this.autoOmni.move(getCorrectedDistance(-250), 0.3);
         sleep(SLEEP_TIME);
 
        this.shootRings();
 
-        this.autoOmni.rotate(getCorrectedDistance(-200), 0.2);
-        sleep(SLEEP_TIME);
-        this.autoOmni.move(getCorrectedDistance(-100), this.getDefaultPower(ringPosition));
+//       if(ringPosition != SkystoneDeterminationPipeline.RingPosition.NONE){
+//           this.autoOmni.rotate(getCorrectedDistance(-200), 0.3);
+//           sleep(SLEEP_TIME);
+////        this.autoOmni.move(getCorrectedDistance(-100), this.getDefaultPower(ringPosition));
+//
+//           this.autoOmni.initDriveMotors(hardwareMap, telemetry);
+//           this.lineDetect(true, 0.08);
+//           sleep(SLEEP_TIME);
+//       }
 
-        this.autoOmni.initDriveMotors(hardwareMap, telemetry);
-        this.lineDetect(true);
 
         this.dropWobble(ringPosition, 1);
-        this.wobbleDropThread(autoOmni, 3000);
 
-        this.autoOmni.initDriveMotors(hardwareMap, telemetry);
-        this.lineDetect(false);
+        //low power
+        this.wobbleDropThread(autoOmni, 4400, true);
 
+        //high power
+//        this.wobbleDropThread(autoOmni, 3700, true);
+
+        this.autoOmni.initDriveMotors();
+        if(ringPosition == SkystoneDeterminationPipeline.RingPosition.ONE){
+            this.lineDetect(false, 0.15);
+        }
+        else{
+            this.lineDetect(false, 0.08);
+        }
+        sleep(SLEEP_TIME);
         this.getSecondWobble(ringPosition);
 
         this.dropWobble(ringPosition, 2);
-
-
-
-//        this.dropSecondWobble(ringPosition);
     }
 }
