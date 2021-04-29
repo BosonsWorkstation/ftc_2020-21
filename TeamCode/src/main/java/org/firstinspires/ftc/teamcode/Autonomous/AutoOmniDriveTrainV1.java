@@ -57,7 +57,8 @@ public class AutoOmniDriveTrainV1{
     private static final int TICKS_PER_REVOLUTION = 280;
     private static final double DISTANCE_PER_REVOLUTION = 4 * Math.PI;
     private static final double CRAB_POWER = .2;
-    private static final double correctionPower = 0.05;
+//    private static final double correctionPower = 0.05;
+    private static final double correctionPower = 0;
     private static boolean gyroInitialized = false;
 //    Telemetry.Item currentPositionTel;
 //    Telemetry.Item targetValueTel;
@@ -327,10 +328,12 @@ public class AutoOmniDriveTrainV1{
     }
 
 
-
-
-
     public void move(int distance, double power){
+        this.move(distance, power, true);
+    }
+
+
+    public void move(int distance, double power, boolean slowDown){
         int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
         int frontRightPosition = frontRightWheel.getCurrentPosition();
         int backLeftPosition = backLeftWheel.getCurrentPosition();
@@ -340,8 +343,6 @@ public class AutoOmniDriveTrainV1{
         frontRightWheel.setTargetPosition(frontRightPosition + distance);
         backLeftWheel.setTargetPosition(backLeftPosition - distance);
         backRightWheel.setTargetPosition(backRightPosition + distance);
-
-//        boolean direction = backLeftPosition - backLeftWheel.getTargetPosition() > 0;
 
         frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -353,32 +354,18 @@ public class AutoOmniDriveTrainV1{
         backLeftWheel.setPower(power);
         backRightWheel.setPower(power);
 
-//        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//        double heading = angles.firstAngle;
         while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
             sleep(5);
-            if (power > 0.3 && Math.abs(distance) > 400){
-                if (Math.abs(frontRightWheel.getTargetPosition() - frontRightWheel.getCurrentPosition()) < 400) {
-                    frontLeftWheel.setPower(frontLeftWheel.getPower() * 0.8);
-                    frontRightWheel.setPower(frontRightWheel.getPower() * 0.8);
-                    backLeftWheel.setPower(backLeftWheel.getPower() * 0.8);
-                    backRightWheel.setPower(backRightWheel.getPower() * 0.8);
+            if(slowDown){
+                if (frontRightWheel.getPower() > 0.2 && Math.abs(distance) > 400){
+                    if (Math.abs(frontRightWheel.getTargetPosition() - frontRightWheel.getCurrentPosition()) < 400) {
+                        frontLeftWheel.setPower(frontLeftWheel.getPower() * 0.8);
+                        frontRightWheel.setPower(frontRightWheel.getPower() * 0.8);
+                        backLeftWheel.setPower(backLeftWheel.getPower() * 0.8);
+                        backRightWheel.setPower(backRightWheel.getPower() * 0.8);
+                    }
                 }
             }
-
-//            Orientation currentAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//            double currentHeading = currentAngles.firstAngle;
-//            telemetry.addData("current heading", currentHeading);
-//            telemetry.addData("heading", heading);
-//            telemetry.update();
-//            if (currentHeading - heading > 5){
-//                frontLeftWheel.setPower(frontLeftWheel.getPower() - 0.05);
-//                backLeftWheel.setPower(backLeftWheel.getPower() - 0.05);
-//            }
-//            if(currentHeading - heading < -5){
-//                frontRightWheel.setPower(frontRightWheel.getPower() - 0.05);
-//                backRightWheel.setPower(backRightWheel.getPower() - 0.05);
-//            }
         }
 
         stopNow();
@@ -401,10 +388,11 @@ public class AutoOmniDriveTrainV1{
     }
 
     public void powerLaunch(){
+//        this.launcherR.setPower(0.32);
+//        this.launcherL.setPower(0.32);
+
         this.launcherR.setPower(0.35);
         this.launcherL.setPower(0.35);
-//        this.launcherR.setPower(0.37);
-//        this.launcherL.setPower(0.37);
     }
 
     public void launch() {

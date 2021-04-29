@@ -24,7 +24,7 @@ public class AutoStateV2 extends AutoStateV1 {
 
     @Override
     protected void crabToBlue(){
-        this.autoOmni.crab(getCorrectedDistance(-200), 0.6);
+//        this.autoOmni.crab(getCorrectedDistance(-200), 0.6);
         this.autoOmni.initDriveMotors(hardwareMap, telemetry);
         this.crabToBlue(false);
     }
@@ -33,9 +33,9 @@ public class AutoStateV2 extends AutoStateV1 {
     protected void moveToLine(SkystoneDeterminationPipeline.RingPosition ringPosition){
         switch (ringPosition){
             case NONE:
-//                this.autoOmni.move(getCorrectedDistance(2950), 0.6);
-                this.autoOmni.move(getCorrectedDistance(2750), 0.4);
-                break;
+
+//                this.autoOmni.move(getCorrectedDistance(2750), 0.4);
+//                break;
             case ONE:
             case FOUR:
                 this.autoOmni.move(getCorrectedDistance(2750), 0.4);
@@ -64,8 +64,8 @@ public class AutoStateV2 extends AutoStateV1 {
                 this.autoOmni.move(getCorrectedDistance(-1100), this.getDefaultPower(ringPosition));
                 break;
             case FOUR:
-                this.autoOmni.diagonal(HeadingEnum.SOUTH_EAST, getCorrectedDistance(3000), this.getDefaultPower(ringPosition));
-                this.autoOmni.move(getCorrectedDistance(-400), this.getDefaultPower(ringPosition));
+//                this.autoOmni.diagonal(HeadingEnum.SOUTH_EAST, getCorrectedDistance(3000), this.getDefaultPower(ringPosition));
+                this.autoOmni.move(getCorrectedDistance(-2100), this.getDefaultPower(ringPosition));
                 break;
             default:
                 telemetry.addData(String.valueOf(ringPosition), "NO Rings Detected");

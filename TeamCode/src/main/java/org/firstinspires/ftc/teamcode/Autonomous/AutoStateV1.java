@@ -10,7 +10,7 @@ public class AutoStateV1 extends RingDetectV2{
     private static final int CAMERA_X_POSITION = 75;
     private static final int CAMERA_Y_POSITION = 50;
 
-    private static final double DEFAULT_POWER = 0.8;
+    private static final double DEFAULT_POWER = 0.4;
 
     @Override
     public void runOpMode() {
@@ -45,7 +45,7 @@ public class AutoStateV1 extends RingDetectV2{
 //        return ringPosition == SkystoneDeterminationPipeline.RingPosition.FOUR  ? 1:DEFAULT_POWER;
 
         //only 0 rings is power 0.8, others are 1
-        return ringPosition == SkystoneDeterminationPipeline.RingPosition.NONE ? DEFAULT_POWER:0.9;
+        return DEFAULT_POWER;
     }
 
     @Override
@@ -65,13 +65,13 @@ public class AutoStateV1 extends RingDetectV2{
 
     @Override
     protected void shootRings(){
-        this.autoOmni.rotate(getCorrectedDistance(145), 0.4);
+        this.autoOmni.rotate(getCorrectedDistance(shootFirstRotation), 0.4);
         this.propel();
 //        sleep(SLEEP_TIME);
-        this.autoOmni.rotate(getCorrectedDistance(65), 0.4);
+        this.autoOmni.rotate(getCorrectedDistance(shootSecondRotation), 0.4);
         this.propel();
 //        sleep(SLEEP_TIME);
-        this.autoOmni.rotate(getCorrectedDistance(50), 0.4);
+        this.autoOmni.rotate(getCorrectedDistance(shootThirdRotation), 0.4);
         this.propel();
         sleep(100);
         this.autoOmni.launchStop();
@@ -92,14 +92,19 @@ public class AutoStateV1 extends RingDetectV2{
 
         moveToLine(ringPosition);
 
-        this.autoOmni.initDriveMotors();
-        this.lineDetect(true, 0.1);
 
-        this.autoOmni.move(getCorrectedDistance(-300), getDefaultPower());
+        //TODO DONT YOU FORGET
+//        this.autoOmni.initDriveMotors();
+//        this.lineDetect(true, 0.08);
+
+//        this.autoOmni.move(getCorrectedDistance(-300), getDefaultPower());
+
+
         //Start Launcher Motors
         launch();
         sleep(100);
-        this.autoOmni.crab(getCorrectedDistance(-300), 0.6);
+
+//        this.autoOmni.crab(getCorrectedDistance(-300), 0.6);
         crabToBlue();
 
         this.autoOmni.crab(getCorrectedDistance(200), 0.3);
@@ -110,7 +115,7 @@ public class AutoStateV1 extends RingDetectV2{
 
 
         this.autoOmni.move(getCorrectedDistance(-250), 0.3);
-        sleep(SLEEP_TIME);
+        sleep(100);
 
        this.shootRings();
 
@@ -127,22 +132,19 @@ public class AutoStateV1 extends RingDetectV2{
 
         this.dropWobble(ringPosition, 1);
 
-        //low power
-        this.wobbleDropThread(autoOmni, 4400, true);
 
-        //high power
-//        this.wobbleDropThread(autoOmni, 3700, true);
+        if(ringPosition == SkystoneDeterminationPipeline.RingPosition.NONE){
+            this.wobbleDropThread(autoOmni, 4400, true);
 
-        this.autoOmni.initDriveMotors();
-        if(ringPosition == SkystoneDeterminationPipeline.RingPosition.ONE){
-            this.lineDetect(false, 0.15);
+            this.autoOmni.initDriveMotors();
+
+            this.lineDetect(true, 0.08);
+
+            sleep(SLEEP_TIME);
+            this.getSecondWobble(ringPosition);
+
+            this.dropWobble(ringPosition, 2);
         }
-        else{
-            this.lineDetect(false, 0.08);
-        }
-        sleep(SLEEP_TIME);
-        this.getSecondWobble(ringPosition);
 
-        this.dropWobble(ringPosition, 2);
     }
 }
