@@ -560,4 +560,9 @@ public class OmniDriveTrainV2 {
         telemetry.update();
     }
 
+    public void test() {
+        int a = 2;
+        a++;
+    }
+
 }
