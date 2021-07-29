@@ -49,13 +49,7 @@ public class OmniDriveTrainV2 {
     double reset_angle = 0;
     private double correction_factor = 0;
 
-    private Telemetry.Item leftFrontTelemetry;
-    private Telemetry.Item rightFrontTelemetry;
-    private Telemetry.Item leftBackTelemetry;
-    private Telemetry.Item rightBackTelemetry;
-    private Telemetry.Item usePowerTelemetry;
-    private Telemetry.Item colorLeftTelemetry;
-    private Telemetry.Item colorRightTelemetry;
+//    HardwareMap hardwareMap = null;
 
     public enum DirectionEnum{
         NORTH(90), SOUTH(-90), EAST(180), WEST(0);
@@ -108,7 +102,11 @@ public class OmniDriveTrainV2 {
 //        backLeftWheel.setDirection(DcMotor.Direction.REVERSE);
 //        frontRightWheel.setDirection(DcMotor.Direction.FORWARD);
 //        backRightWheel.setDirection(DcMotor.Direction.FORWARD);
+            this.initializeMotors();
 
+        }
+
+    public void initializeMotors(){
         //NEW MOTORS
         frontLeftWheel.setDirection(DcMotor.Direction.FORWARD);
         backLeftWheel.setDirection(DcMotor.Direction.FORWARD);
@@ -127,9 +125,7 @@ public class OmniDriveTrainV2 {
         backRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         towerHand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-
+    }
 
     public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
 //        if(!gyroInitialized) {
@@ -246,8 +242,15 @@ public class OmniDriveTrainV2 {
 
 
     public void launch(){
-       launcherL.setPower(0.53);
-       launcherR.setPower(0.53);
+//        launcherL.setPower(0.55);
+//       launcherR.setPower(0.55);
+
+        launcherL.setPower(8.00);
+        launcherR.setPower(0.55);
+
+
+//       launcherL.setPower(0.53);
+//       launcherR.setPower(0.53);
 //        launcherL.setPower(0.3);
 //        launcherR.setPower(0.3);
     }
@@ -333,9 +336,9 @@ public class OmniDriveTrainV2 {
         int backLeftPosition = backLeftWheel.getCurrentPosition();
         int backRightPosition = backRightWheel.getCurrentPosition();
 
-        frontLeftWheel.setTargetPosition(frontLeftPosition + distance);
+        frontLeftWheel.setTargetPosition(frontLeftPosition - distance);
         frontRightWheel.setTargetPosition(frontRightPosition + distance);
-        backLeftWheel.setTargetPosition(backLeftPosition + distance);
+        backLeftWheel.setTargetPosition(backLeftPosition - distance);
         backRightWheel.setTargetPosition(backRightPosition + distance);
 
         frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -358,6 +361,8 @@ public class OmniDriveTrainV2 {
         }
 
         stopNow();
+
+//        this.initializeMotors(hardwareMap, telemetry);
     }
 
     public void move(int distance, double power){
@@ -513,11 +518,11 @@ public class OmniDriveTrainV2 {
     }
 
     public void autoShoot() throws InterruptedException {
-        this.autoRotate(135, 0.2);
-        this.propel();
         this.autoRotate(75, 0.2);
         this.propel();
-        this.autoRotate(65, 0.2);
+        this.autoRotate(35, 0.2);
+        this.propel();
+        this.autoRotate(25, 0.2);
         this.propel();
     }
 
