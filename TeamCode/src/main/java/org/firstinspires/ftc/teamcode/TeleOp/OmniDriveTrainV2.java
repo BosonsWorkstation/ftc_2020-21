@@ -67,13 +67,6 @@ public class OmniDriveTrainV2 {
         this.initializeGyro(hardwareMap, telemetry);
         this.initializeMotors(hardwareMap, telemetry);
         this.correction_factor = direction.getCorrection();
-//        this.leftFrontTelemetry = telemetry.addData("LF Power", frontLeftWheel.getPower());
-//        this.rightFrontTelemetry = telemetry.addData("RF Power", frontRightWheel.getPower());
-//        this.leftBackTelemetry = telemetry.addData("LF Power", backLeftWheel.getPower());
-//        this.rightBackTelemetry = telemetry.addData("RB Power", backRightWheel.getPower());
-//        this.usePowerTelemetry = telemetry.addData("usePower", 0);
-//        this.colorLeftTelemetry = telemetry.addData("Left Color Val", leftColor.argb());
-//        this.colorRightTelemetry = telemetry.addData("Right Color Val", rightColor.argb());
     }
 
     public void initializeMotors(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -149,7 +142,6 @@ public class OmniDriveTrainV2 {
     }
 
     public void stop(){
-
         frontRightWheel.setPower(0);
         frontLeftWheel.setPower(0);
         backRightWheel.setPower(0);
