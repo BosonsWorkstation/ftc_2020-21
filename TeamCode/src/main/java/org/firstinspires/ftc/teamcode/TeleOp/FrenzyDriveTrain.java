@@ -144,7 +144,16 @@ public class FrenzyDriveTrain {
     }
 
     public void stopSoft(double power){
-        
+        while(power > Math.abs(0.05)){
+            power = power * 0.8;
+//            try {
+//                sleep(25);
+//            } catch (InterruptedException e) {
+//                Thread.currentThread().interrupt();
+//            }
+            driveSetPower(power);
+        }
+        stopNow();
     }
 
     //START MAIN DRIVE COMPONENTS
