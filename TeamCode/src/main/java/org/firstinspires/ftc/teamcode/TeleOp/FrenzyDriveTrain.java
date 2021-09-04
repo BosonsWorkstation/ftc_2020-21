@@ -1,41 +1,62 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.Autonomous.HeadingEnum;
 
-import static java.lang.Thread.sleep;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
 public class FrenzyDriveTrain {
-    protected DcMotor backRightWheel;
-    protected DcMotor backLeftWheel;
-    protected DcMotor frontRightWheel;
-    protected DcMotor frontLeftWheel;
 
-    protected ColorSensor colorLeft;
-    protected ColorSensor colorRight;
-    private static BNO055IMU imu;
-    private static boolean gyroInitialized = false;
+    private final Telemetry telemetry;
 
-    private static final double MAX_POWER = 0.8;
-    private Telemetry telemetry;
+    public FrenzyDriveTrain(HardwareMap hardwareMap, Telemetry telemetry, FrenzyDriveTrain.DirectionEnum direction) {
+        this.telemetry = telemetry;
+    }
+
     float rotate_angle = 0;
     double reset_angle = 0;
-    private double correction_factor = 0;
+
+    protected DcMotor front_left_wheel = null;
+    protected DcMotor back_left_wheel = null;
+    protected DcMotor back_right_wheel = null;
+    protected DcMotor front_right_wheel = null;
+
+    private static BNO055IMU imu;
+
+    public void initializeDriveMotors(HardwareMap hardwareMap) {
+        front_left_wheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
+        back_left_wheel = hardwareMap.dcMotor.get("Back_Left_Wheel");
+        back_right_wheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
+        front_right_wheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
+
+        front_left_wheel.setDirection(DcMotor.Direction.REVERSE);
+        back_left_wheel.setDirection(DcMotor.Direction.REVERSE);
+        front_right_wheel.setDirection(DcMotor.Direction.FORWARD);
+        back_right_wheel.setDirection(DcMotor.Direction.FORWARD);
+
+        front_left_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        back_left_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        front_right_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        back_right_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
+    }
 
     public enum DirectionEnum{
         NORTH(90), SOUTH(-90), EAST(180), WEST(0);
@@ -48,274 +69,54 @@ public class FrenzyDriveTrain {
         }
     }
 
-    public FrenzyDriveTrain(HardwareMap hardwareMap, Telemetry telemetry, FrenzyDriveTrain.DirectionEnum direction) {
-        this.telemetry = telemetry;
-        this.initializeGyro(hardwareMap, telemetry);
-        this.initializeMotors(hardwareMap, telemetry);
-        this.correction_factor = direction.getCorrection();
+    public void simpleF(double simplePower){
+        front_left_wheel.setPower(-simplePower);
+        back_left_wheel.setPower(-simplePower);
+        back_right_wheel.setPower(-simplePower);
+        front_right_wheel.setPower(-simplePower);
     }
-
-    public void initializeMotors(HardwareMap hardwareMap, Telemetry telemetry) {
-        //drive motors
-        this.backLeftWheel = hardwareMap.dcMotor.get("Back_Left_Wheel");
-        this.backRightWheel = hardwareMap.dcMotor.get("Back_Right_Wheel");
-        this.frontLeftWheel = hardwareMap.dcMotor.get("Front_Left_Wheel");
-        this.frontRightWheel = hardwareMap.dcMotor.get("Front_Right_Wheel");
-        //attachment motors
-
+    public void simpleL(double simplePower){
+        front_left_wheel.setPower(simplePower);
+        back_left_wheel.setPower(-simplePower);
+        back_right_wheel.setPower(simplePower);
+        front_right_wheel.setPower(-simplePower);
     }
-
-    public void initializeGyro(HardwareMap hardwareMap, Telemetry telemetry) {
-//        if(!gyroInitialized) {
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-
-        imu.initialize(parameters);
-//        }
-//        gyroInitialized = true;
+    public void simpleB(double simplePower){
+        front_left_wheel.setPower(simplePower);
+        back_left_wheel.setPower(simplePower);
+        back_right_wheel.setPower(simplePower);
+        front_right_wheel.setPower(simplePower);
     }
-
-    public void resetAngle(){
-        reset_angle = getHeading() + reset_angle;
+    public void simpleR(double simplePower){
+        front_left_wheel.setPower(-simplePower);
+        back_left_wheel.setPower(simplePower);
+        back_right_wheel.setPower(-simplePower);
+        front_right_wheel.setPower(simplePower);
     }
-
-    public double getHeading(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double heading = angles.firstAngle;
-        if(heading < -180) {
-            heading = heading + 360;
-        }
-        else if(heading > 180){
-            heading = heading - 360;
-        }
-        heading = heading - reset_angle;
-        return heading + correction_factor;
-
-    }
-
-    public void resetDriveMotors(){
-        frontLeftWheel.setDirection(DcMotor.Direction.FORWARD);
-        backLeftWheel.setDirection(DcMotor.Direction.FORWARD);
-        frontRightWheel.setDirection(DcMotor.Direction.REVERSE);
-        backRightWheel.setDirection(DcMotor.Direction.REVERSE);
-    }
-
-    public void useDriveEncoders(){
-        frontLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void noDriveEncoders(){
-        frontLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    public void driveRunToPosition(){
-        frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void driveSetPower(double power){
-        frontLeftWheel.setPower(power);
-        frontRightWheel.setPower(power);
-        backLeftWheel.setPower(power);
-        backRightWheel.setPower(power);
+    public void simpleRotate(double simplePower){
+        front_left_wheel.setPower(-simplePower);
+        back_left_wheel.setPower(-simplePower);
+        back_right_wheel.setPower(simplePower);
+        front_right_wheel.setPower(simplePower);
     }
 
     public void stopNow(){
-        frontRightWheel.setPower(0);
-        frontLeftWheel.setPower(0);
-        backRightWheel.setPower(0);
-        backLeftWheel.setPower(0);
+        front_left_wheel.setPower(0);
+        back_left_wheel.setPower(0);
+        back_right_wheel.setPower(0);
+        front_right_wheel.setPower(0);
     }
 
-    public void stopSoft(double power){
-        while(power > Math.abs(0.05)){
-            power = power * 0.8;
-//            try {
-//                sleep(25);
-//            } catch (InterruptedException e) {
-//                Thread.currentThread().interrupt();
-//            }
-            driveSetPower(power);
-        }
-        stopNow();
+    public void reset_angle(){
+        this.reset_angle = this.getHeading() + this.reset_angle;
     }
 
-    //START MAIN DRIVE COMPONENTS
-    public void autoRotate(int distance, double power){
-        useDriveEncoders();
 
-        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
-        int frontRightPosition = frontRightWheel.getCurrentPosition();
-        int backLeftPosition = backLeftWheel.getCurrentPosition();
-        int backRightPosition = backRightWheel.getCurrentPosition();
 
-        frontLeftWheel.setTargetPosition(frontLeftPosition + distance);
-        frontRightWheel.setTargetPosition(frontRightPosition + distance);
-        backLeftWheel.setTargetPosition(backLeftPosition + distance);
-        backRightWheel.setTargetPosition(backRightPosition + distance);
-
-        driveRunToPosition();
-
-        driveSetPower(power);
-
-        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-            try {
-                sleep(5);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        stopNow(); //TODO CHANGE ALL TO stopSoft??
-
-        //TODO Add noDriveEncoders??
-    }
-
-    public void autoMove(int distance, double power){
-        useDriveEncoders();
-
-        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
-        int frontRightPosition = frontRightWheel.getCurrentPosition();
-        int backLeftPosition = backLeftWheel.getCurrentPosition();
-        int backRightPosition = backRightWheel.getCurrentPosition();
-
-        frontLeftWheel.setTargetPosition(frontLeftPosition - distance);
-        frontRightWheel.setTargetPosition(frontRightPosition + distance);
-        backLeftWheel.setTargetPosition(backLeftPosition - distance);
-        backRightWheel.setTargetPosition(backRightPosition + distance);
-
-        driveRunToPosition();
-
-        driveSetPower(power);
-
-        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-            try {
-                sleep(5);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        stopNow(); //TODO CHANGE ALL TO stopSoft??
-
-        //TODO Add noDriveEncoders??
-    }
-
-    public void autoCrab(int distance, double power){
-        useDriveEncoders();
-
-        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
-        int frontRightPosition = frontRightWheel.getCurrentPosition();
-        int backLeftPosition = backLeftWheel.getCurrentPosition();
-        int backRightPosition = backRightWheel.getCurrentPosition();
-
-        frontLeftWheel.setTargetPosition(frontLeftPosition - distance);
-        frontRightWheel.setTargetPosition(frontRightPosition - distance);
-        backLeftWheel.setTargetPosition(backLeftPosition + distance);
-        backRightWheel.setTargetPosition(backRightPosition + distance);
-
-        driveRunToPosition();
-
-        driveSetPower(power);
-
-        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-            try {
-                sleep(5);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        stopNow(); //TODO CHANGE ALL TO stopSoft??
-
-        //TODO Add noDriveEncoders??
-    }
-
-    public void diagonal(HeadingEnum direction, int distance, double power){
-        useDriveEncoders();
-        //1 = forward + left; 2 = forward + right; 3 = backward + left; 4 = backward + right
-        int frontLeftPosition = frontLeftWheel.getCurrentPosition() ;
-        int frontRightPosition = frontRightWheel.getCurrentPosition();
-        int backLeftPosition = backLeftWheel.getCurrentPosition();
-        int backRightPosition = backRightWheel.getCurrentPosition();
-
-        switch(direction){
-            case SOUTH_EAST:
-                frontRightWheel.setTargetPosition(frontRightPosition - distance);
-                backLeftWheel.setTargetPosition(backLeftPosition + distance);
-
-                frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                frontRightWheel.setPower(power);
-                backLeftWheel.setPower(power);
-
-                break;
-            case SOUTH_WEST:
-                frontLeftWheel.setTargetPosition(frontLeftPosition + distance);
-                backRightWheel.setTargetPosition(backRightPosition - distance);
-
-                frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                frontLeftWheel.setPower(power);
-                backRightWheel.setPower(power);
-
-                break;
-            case NORTH_EAST:
-                frontLeftWheel.setTargetPosition(frontLeftPosition - distance);
-                backRightWheel.setTargetPosition(backRightPosition + distance);
-
-                frontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                frontLeftWheel.setPower(power);
-                backRightWheel.setPower(power);
-
-                break;
-            case NORTH_WEST:
-                frontRightWheel.setTargetPosition(frontRightPosition + distance);
-                backLeftWheel.setTargetPosition(backLeftPosition - distance);
-
-                frontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                frontRightWheel.setPower(power);
-                backLeftWheel.setPower(power);
-
-                break;
-        }
-
-        while(frontLeftWheel.isBusy() && frontRightWheel.isBusy() && backLeftWheel.isBusy() && backRightWheel.isBusy()){
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        stopNow();
-//        stopSoft();
-    }
-
-    public void drive(double moveValue, double crabValue, double turnValue, double maxPower) {
-
+    public void drive(double crabValue, double moveValue, double turnValue, double maxPower) {
+//        double Protate = gamepad1.right_stick_x / 4;
+//        double stick_x = gamepad1.left_stick_x * Math.sqrt(Math.pow(1 - Math.abs(Protate), 2) / 2); //Accounts for Protate when limiting magnitude to be less than 1
+//        double stick_y = gamepad1.left_stick_y * Math.sqrt(Math.pow(1 - Math.abs(Protate), 2) / 2);
         double Protate = turnValue;
         double stick_x = crabValue * Math.sqrt(Math.pow(1-Math.abs(Protate), 2)/2); //Accounts for Protate when limiting magnitude to be less than 1
         double stick_y = moveValue * Math.sqrt(Math.pow(1-Math.abs(Protate), 2)/2);
@@ -330,42 +131,53 @@ public class FrenzyDriveTrain {
             gyroAngle = gyroAngle + (Math.PI / 2);
         } else if (Math.PI / 2 <= gyroAngle) {
             gyroAngle = gyroAngle - (3 * Math.PI / 2);
+//            gyroAngle = gyroAngle - (Math.PI / 2);
         }
         gyroAngle = -1 * gyroAngle;
 
-
+//        if (gamepad1.right_bumper) { //Disables gyro, sets to -Math.PI/2 so front is defined correctly.
+//            gyroAngle = -Math.PI / 2;
+//        }
+        //MOVEMENT
         theta = Math.atan2(stick_y, stick_x) - gyroAngle - (Math.PI / 2);
         Px = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta + Math.PI / 4));
         Py = Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)) * (Math.sin(theta - Math.PI / 4));
 
+        telemetry.addData("crab val", crabValue);
+        telemetry.addData("move val", moveValue);
+        telemetry.addData("turn val", turnValue);
+        telemetry.addData("Magnitude", Math.sqrt(Math.pow(stick_x, 2) + Math.pow(stick_y, 2)));
+        telemetry.addData("Front Left", Py - Protate);
+        telemetry.addData("Back Left", Px - Protate);
+        telemetry.addData("Back Right", Py + Protate);
+        telemetry.addData("Front Right", Px + Protate);
 
-        frontLeftWheel.setPower(Py - Protate);
-        backLeftWheel.setPower(Px - Protate);
-        backRightWheel.setPower(Py + Protate);
-        frontRightWheel.setPower(Px + Protate);
-
-
+        if(Math.abs(crabValue) < 0.2 && Math.abs(moveValue) < 0.2){
+            front_left_wheel.setPower(-Protate);
+            back_left_wheel.setPower(-Protate);
+            back_right_wheel.setPower(Protate);
+            front_right_wheel.setPower(Protate);
+        }
+        else{
+            front_left_wheel.setPower(Py - Protate);
+            back_left_wheel.setPower(Px - Protate);
+            back_right_wheel.setPower(Py + Protate);
+            front_right_wheel.setPower(Px + Protate);
+        }
         telemetry.update();
+
     }
 
-    public void  movePower (double power){
-        frontLeftWheel.setPower(-power);
-        frontRightWheel.setPower(power);
-        backLeftWheel.setPower(-power);
-        backRightWheel.setPower(power);
-    }
-
-    public void crabPower (double power){
-        frontLeftWheel.setPower(-power);
-        frontRightWheel.setPower(-power);
-        backLeftWheel.setPower(power);
-        backRightWheel.setPower(power);
-    }
-
-    public void rotatePower (double power){
-        frontLeftWheel.setPower(power);
-        frontRightWheel.setPower(power);
-        backLeftWheel.setPower(power);
-        backRightWheel.setPower(power);
+    public double getHeading(){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        if(heading < -180) {
+            heading = heading + 360;
+        }
+        else if(heading > 180){
+            heading = heading - 360;
+        }
+        heading = heading - reset_angle;
+        return heading;
     }
 }
